@@ -46,7 +46,7 @@ public class UserDao {
 	 * @param contactList
 	 */
 	public void saveContactList(List<EaseUser> contactList) {
-	    DemoDBManager.getInstance().saveContactList(contactList);
+	    SuperChatDBManager.getInstance().saveContactList(contactList);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class UserDao {
 	 */
 	public Map<String, EaseUser> getContactList() {
 		
-	    return DemoDBManager.getInstance().getContactList();
+	    return SuperChatDBManager.getInstance().getContactList();
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class UserDao {
 	 * @param username
 	 */
 	public void deleteContact(String username){
-	    DemoDBManager.getInstance().deleteContact(username);
+	    SuperChatDBManager.getInstance().deleteContact(username);
 	}
 	
 	/**
@@ -72,30 +72,30 @@ public class UserDao {
 	 * @param user
 	 */
 	public void saveContact(EaseUser user){
-	    DemoDBManager.getInstance().saveContact(user);
+	    SuperChatDBManager.getInstance().saveContact(user);
 	}
 	
 	public void setDisabledGroups(List<String> groups){
-	    DemoDBManager.getInstance().setDisabledGroups(groups);
+	    SuperChatDBManager.getInstance().setDisabledGroups(groups);
     }
     
     public List<String>  getDisabledGroups(){       
-        return DemoDBManager.getInstance().getDisabledGroups();
+        return SuperChatDBManager.getInstance().getDisabledGroups();
     }
     
     public void setDisabledIds(List<String> ids){
-        DemoDBManager.getInstance().setDisabledIds(ids);
+        SuperChatDBManager.getInstance().setDisabledIds(ids);
     }
     
     public List<String> getDisabledIds(){
-        return DemoDBManager.getInstance().getDisabledIds();
+        return SuperChatDBManager.getInstance().getDisabledIds();
     }
     
     public Map<String, RobotUser> getRobotUser(){
-    	return DemoDBManager.getInstance().getRobotList();
+    	return SuperChatDBManager.getInstance().getRobotList();
     }
     
     public void saveRobotUser(List<RobotUser> robotList){
-    	DemoDBManager.getInstance().saveRobotList(robotList);
+    	SuperChatDBManager.getInstance().saveRobotList(robotList);
     }
 }

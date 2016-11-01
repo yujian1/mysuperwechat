@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.SuperChatHelper;
 import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.domain.EaseUser;
 
@@ -27,7 +27,7 @@ public class UserProfileManager {
 	/**
 	 * HuanXin sync contact nick and avatar listener
 	 */
-	private List<DemoHelper.DataSyncListener> syncContactInfosListeners;
+	private List<SuperChatHelper.DataSyncListener> syncContactInfosListeners;
 
 	private boolean isSyncingContactInfosWithServer = false;
 
@@ -41,12 +41,12 @@ public class UserProfileManager {
 			return true;
 		}
 		ParseManager.getInstance().onInit(context);
-		syncContactInfosListeners = new ArrayList<DemoHelper.DataSyncListener>();
+		syncContactInfosListeners = new ArrayList<SuperChatHelper.DataSyncListener>();
 		sdkInited = true;
 		return true;
 	}
 
-	public void addSyncContactInfoListener(DemoHelper.DataSyncListener listener) {
+	public void addSyncContactInfoListener(SuperChatHelper.DataSyncListener listener) {
 		if (listener == null) {
 			return;
 		}
@@ -55,7 +55,7 @@ public class UserProfileManager {
 		}
 	}
 
-	public void removeSyncContactInfoListener(DemoHelper.DataSyncListener listener) {
+	public void removeSyncContactInfoListener(SuperChatHelper.DataSyncListener listener) {
 		if (listener == null) {
 			return;
 		}
@@ -76,7 +76,7 @@ public class UserProfileManager {
 				isSyncingContactInfosWithServer = false;
 				// in case that logout already before server returns,we should
 				// return immediately
-				if (!DemoHelper.getInstance().isLoggedIn()) {
+				if (!SuperChatHelper.getInstance().isLoggedIn()) {
 					return;
 				}
 				if (callback != null) {
@@ -97,7 +97,7 @@ public class UserProfileManager {
 	}
 
 	public void notifyContactInfosSyncListener(boolean success) {
-		for (DemoHelper.DataSyncListener listener : syncContactInfosListeners) {
+		for (SuperChatHelper.DataSyncListener listener : syncContactInfosListeners) {
 			listener.onSyncComplete(success);
 		}
 	}

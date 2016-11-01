@@ -59,7 +59,7 @@ public class SplashActivity extends BaseActivity {
 						Thread.sleep(sleepTime);
 					} catch (InterruptedException e) {
 					}
-					startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+					startActivity(new Intent(SplashActivity.this, GuideActivity.class));
 					finish();
 				}
 			}
@@ -71,6 +71,7 @@ public class SplashActivity extends BaseActivity {
 	 * get sdk version
 	 */
 	private String getVersion() {
-	    return EMClient.getInstance().getChatConfig().getVersion();
+
+		return EMClient.getInstance().getChatConfig().getVersion();
 	}
 }

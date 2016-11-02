@@ -82,6 +82,7 @@
             android:layout_width="338dp"
             android:layout_height="40dp"
             android:id="@+id/button"
+            android:onClick="login"
             android:layout_marginLeft="36dp"
             android:layout_weight="0.06"
             android:textColor="@color/white"
@@ -99,6 +100,7 @@
     <Button
         android:id="@+id/layout_resiger"
         android:layout_width="wrap_content"
+        android:onClick="register"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="150dp"

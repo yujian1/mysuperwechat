@@ -171,7 +171,7 @@ public class LoginActivity extends BaseActivity {
         final long start = System.currentTimeMillis();
         // call login method
         Log.d(TAG, "EMClient.getInstance().login");
-        EMClient.getInstance().login(currentUsername, MD5.getMessageDigest(currentPassword), new EMCallBack() {
+        EMClient.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
 
             @Override
             public void onSuccess() {
@@ -203,7 +203,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginAppServer() {
-        NetDao.login(mContext, currentUsername, currentPassword, new OkHttpUtils.OnCompleteListener<String>() {
+        NetDao.login(mContext, currentUsername,  MD5.getMessageDigest(currentPassword), new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
                 L.e(TAG, "s" + s);

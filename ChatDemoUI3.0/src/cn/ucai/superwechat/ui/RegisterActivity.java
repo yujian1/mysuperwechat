@@ -32,7 +32,6 @@ import butterknife.OnClick;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.date.NetDao;
 import cn.ucai.superwechat.date.OkHttpUtils;
 import cn.ucai.superwechat.utils.CommonUtils;

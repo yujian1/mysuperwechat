@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.ucai.superwechat.I;
-import cn.ucai.superwechat.bean.Result;
 
 public class ResultUtils {
     public static <T> Result getResultFromJson(String jsonStr, Class<T> clazz){

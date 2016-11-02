@@ -5,7 +5,6 @@ import android.content.Context;
 import java.io.File;
 
 import cn.ucai.superwechat.I;
-import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.utils.MD5;
 
 

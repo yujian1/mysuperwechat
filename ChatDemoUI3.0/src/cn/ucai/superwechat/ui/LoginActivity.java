@@ -41,9 +41,13 @@ import cn.ucai.superwechat.SuperChatHelper;
 import cn.ucai.superwechat.date.NetDao;
 import cn.ucai.superwechat.date.OkHttpUtils;
 import cn.ucai.superwechat.db.SuperChatDBManager;
+import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.domain.Result;
+import cn.ucai.superwechat.domain.User;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;
+import cn.ucai.superwechat.utils.ResultUtils;
 
 /**
  * Login screen
@@ -207,6 +211,20 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(String s) {
                 L.e(TAG, "s" + s);
+                if (s!=null && s!=""){
+                    Result result = ResultUtils.getListResultFromJson(s, User.class);
+                    if (result!=null && result.isRetMsg()){
+                        User user = (User) result.getRetData();
+                        if (user!=null) {
+                            UserDao dao = new UserDao(mContext);
+                            dao.saveUser(user);
+                            SuperChatHelper.getInstance().setCurrentUser(user);
+                        }
+                    }else {
+                        pd.dismiss();
+                        L.e(TAG,"login fail"+result);
+                    }
+                }
                 loginSuccess();
             }
 

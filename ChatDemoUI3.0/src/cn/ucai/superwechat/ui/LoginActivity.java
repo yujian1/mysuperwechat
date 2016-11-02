@@ -219,13 +219,17 @@ public class LoginActivity extends BaseActivity {
                             UserDao dao = new UserDao(mContext);
                             dao.saveUser(user);
                             SuperChatHelper.getInstance().setCurrentUser(user);
+                            loginSuccess();
+
                         }
                     }else {
                         pd.dismiss();
                         L.e(TAG,"login fail"+result);
                     }
+                }else {
+                    pd.dismiss();
                 }
-                loginSuccess();
+
             }
 
             @Override
@@ -289,5 +293,11 @@ public class LoginActivity extends BaseActivity {
                 MFGT.gotoRegister(this);
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pd.dismiss();
     }
 }

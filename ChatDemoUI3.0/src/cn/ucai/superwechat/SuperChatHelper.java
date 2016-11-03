@@ -224,6 +224,11 @@ public class SuperChatHelper {
             public EaseUser getUser(String username) {
                 return getUserInfo(username);
             }
+
+            @Override
+            public com.hyphenate.easeui.domain.User getAppUser(String usernamea) {
+                return null;
+            }
         });
 
         //set options 

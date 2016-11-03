@@ -34,6 +34,7 @@ import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperChatHelper;
 import cn.ucai.superwechat.date.NetDao;
 import cn.ucai.superwechat.date.OkHttpUtils;
+import cn.ucai.superwechat.domain.Result;
 import cn.ucai.superwechat.utils.CommonUtils;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;

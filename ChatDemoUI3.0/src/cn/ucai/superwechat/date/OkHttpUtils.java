@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.SuperChatApplication;
+import cn.ucai.superwechat.domain.Result;
 import cn.ucai.superwechat.utils.L;
 import okhttp3.Cache;
 import okhttp3.Call;

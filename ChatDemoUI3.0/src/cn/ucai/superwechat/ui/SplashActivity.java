@@ -43,8 +43,8 @@ public class SplashActivity extends BaseActivity {
 					EMClient.getInstance().groupManager().loadAllGroups();
 					EMClient.getInstance().chatManager().loadAllConversations();
 					UserDao dao=new UserDao(mContext);
-					User user=dao.getUser(EMClient.getInstance().getCurrentUser());
-					L.e(TAG,"user"+user);
+                    User user = dao.getUser(EMClient.getInstance().getCurrentUser());
+                    L.e(TAG,"user"+user);
 					SuperChatHelper.getInstance().setCurrentUser(user);
 					long costTime = System.currentTimeMillis() - start;
 					//wait

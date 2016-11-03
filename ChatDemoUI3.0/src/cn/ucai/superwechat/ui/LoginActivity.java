@@ -98,9 +98,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView() {
-        if (SuperChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtUsername.setText(SuperChatHelper.getInstance().getCurrentUsernName());
-        }
+
         mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(R.string.login);
@@ -277,6 +275,9 @@ public class LoginActivity extends BaseActivity {
         super.onResume();
         if (autoLogin) {
             return;
+        }
+        if (SuperChatHelper.getInstance().getCurrentUsernName() != null) {
+            mEtUsername.setText(SuperChatHelper.getInstance().getCurrentUsernName());
         }
     }
 

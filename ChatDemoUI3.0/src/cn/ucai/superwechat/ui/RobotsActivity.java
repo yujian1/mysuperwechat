@@ -34,16 +34,17 @@ import android.widget.TextView;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMContact;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.db.UserDao;
-import cn.ucai.superwechat.domain.RobotUser;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
+import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.domain.RobotUser;
 
 public class RobotsActivity extends BaseActivity {
 

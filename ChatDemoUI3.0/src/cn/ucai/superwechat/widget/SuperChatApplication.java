@@ -11,13 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.ucai.superwechat;
+package cn.ucai.superwechat.widget;
 
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.easemob.redpacketsdk.RedPacket;
+
+import cn.ucai.superwechat.db.SuperChatHelper;
 
 public class SuperChatApplication extends Application {
 

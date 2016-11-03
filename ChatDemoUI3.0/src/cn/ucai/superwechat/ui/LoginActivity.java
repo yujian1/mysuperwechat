@@ -30,24 +30,24 @@ import android.widget.Toast;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.SuperChatApplication;
-import cn.ucai.superwechat.SuperChatHelper;
 import cn.ucai.superwechat.date.NetDao;
 import cn.ucai.superwechat.date.OkHttpUtils;
 import cn.ucai.superwechat.db.SuperChatDBManager;
+import cn.ucai.superwechat.db.SuperChatHelper;
 import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.domain.Result;
-import cn.ucai.superwechat.domain.User;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.ResultUtils;
+import cn.ucai.superwechat.widget.SuperChatApplication;
 
 /**
  * Login screen

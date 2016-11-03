@@ -40,8 +40,6 @@ import com.hyphenate.chat.EMCallManager.EMCameraDataProcessor;
 import com.hyphenate.chat.EMCallManager.EMVideoCallHelper;
 import com.hyphenate.chat.EMCallStateChangeListener;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.media.EMLocalSurfaceView;
 import com.hyphenate.media.EMOppositeSurfaceView;
@@ -51,6 +49,9 @@ import com.superrtc.sdk.VideoView;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
+
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
 
 public class VideoCallActivity extends CallActivity implements OnClickListener {
 

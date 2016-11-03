@@ -4,7 +4,7 @@ import android.widget.Toast;
 
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.SuperChatApplication;
+import cn.ucai.superwechat.widget.SuperChatApplication;
 
 /**
  * Created by clawpo on 16/9/20.

@@ -29,9 +29,6 @@ import android.widget.TextView;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
 import com.hyphenate.easeui.adapter.EaseContactAdapter;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.widget.EaseSidebar;
@@ -40,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import cn.ucai.superwechat.Constant;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
 
 public class GroupPickContactsActivity extends BaseActivity {
 	/** if this is a new group */

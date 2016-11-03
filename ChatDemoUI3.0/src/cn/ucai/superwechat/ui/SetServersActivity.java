@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import cn.ucai.superwechat.SuperChatModel;
+import cn.ucai.superwechat.widget.SuperChatModel;
 import cn.ucai.superwechat.R;
 import com.hyphenate.easeui.widget.EaseTitleBar;
 

@@ -21,9 +21,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
 import com.hyphenate.easeui.adapter.EaseContactAdapter;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.widget.EaseSidebar;
@@ -34,6 +31,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import cn.ucai.superwechat.Constant;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
 
 @SuppressLint("Registered")
 public class PickContactNoCheckboxActivity extends BaseActivity {

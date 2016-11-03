@@ -24,9 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
+
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
 
 public class AddContactActivity extends BaseActivity{
 	private EditText editText;

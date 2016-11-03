@@ -18,10 +18,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import cn.ucai.superwechat.SuperChatHelper;
+import com.hyphenate.util.EMLog;
+
+import cn.ucai.superwechat.db.SuperChatHelper;
 import cn.ucai.superwechat.ui.VideoCallActivity;
 import cn.ucai.superwechat.ui.VoiceCallActivity;
-import com.hyphenate.util.EMLog;
 
 public class CallReceiver extends BroadcastReceiver{
 

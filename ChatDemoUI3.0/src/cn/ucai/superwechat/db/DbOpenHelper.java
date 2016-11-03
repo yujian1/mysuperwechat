@@ -16,9 +16,6 @@ package cn.ucai.superwechat.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import cn.ucai.superwechat.SuperChatHelper;
-
 public class DbOpenHelper extends SQLiteOpenHelper{
 
 	private static final int DATABASE_VERSION = 6;

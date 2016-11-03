@@ -35,13 +35,14 @@ import com.easemob.redpacketui.utils.RedPacketUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.SuperChatModel;
-import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.widget.EaseSwitchButton;
 import com.hyphenate.util.EMLog;
+
+import cn.ucai.superwechat.Constant;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
+import cn.ucai.superwechat.utils.PreferenceManager;
+import cn.ucai.superwechat.widget.SuperChatModel;
 
 /**
  * settings screen

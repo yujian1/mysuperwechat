@@ -16,12 +16,12 @@ package cn.ucai.superwechat.db;
 import android.content.Context;
 
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 
 import java.util.List;
 import java.util.Map;
 
 import cn.ucai.superwechat.domain.RobotUser;
-import cn.ucai.superwechat.domain.User;
 
 public class UserDao {
 	public static final String TABLE_NAME = "uers";
@@ -123,6 +123,21 @@ public class UserDao {
 	}
 
 	public boolean updateUser(User user){
+
 		return SuperChatDBManager.getInstance().updateUser(user);
+	}
+
+	public void saveAppContact(User user){
+		SuperChatDBManager.getInstance().saveAppContact(user);
+	}
+
+
+	public Map<String, User> getAppContactList() {
+
+		return SuperChatDBManager.getInstance().getAppContactList();
+	}
+
+	public void saveAppContactList(List<User> contactList) {
+		SuperChatDBManager.getInstance().saveAppContactList(contactList);
 	}
 }

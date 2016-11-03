@@ -1,15 +1,5 @@
 package cn.ucai.superwechat.ui;
 
-import java.io.ByteArrayOutputStream;
-
-import com.bumptech.glide.Glide;
-import com.hyphenate.EMValueCallBack;
-import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperChatHelper;
-import cn.ucai.superwechat.R;
-import com.hyphenate.easeui.domain.EaseUser;
-import com.hyphenate.easeui.utils.EaseUserUtils;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
@@ -30,8 +20,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.hyphenate.EMValueCallBack;
+import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+
+import java.io.ByteArrayOutputStream;
+
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.SuperChatHelper;
+
 public class UserProfileActivity extends BaseActivity implements OnClickListener{
-	
+
 	private static final int REQUESTCODE_PICK = 1;
 	private static final int REQUESTCODE_CUTTING = 2;
 	private ImageView headAvatar;
@@ -41,9 +41,9 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 	private TextView tvUsername;
 	private ProgressDialog dialog;
 	private RelativeLayout rlNickName;
-	
-	
-	
+
+
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -51,7 +51,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		initView();
 		initListener();
 	}
-	
+
 	private void initView() {
 		headAvatar = (ImageView) findViewById(R.id.user_head_avatar);
 		headPhotoUpdate = (ImageView) findViewById(R.id.user_head_headphoto_update);
@@ -60,7 +60,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		rlNickName = (RelativeLayout) findViewById(R.id.rl_nickname);
 		iconRightArrow = (ImageView) findViewById(R.id.ic_right_arrow);
 	}
-	
+
 	private void initListener() {
 		Intent intent = getIntent();
 		String username = intent.getStringExtra("username");
@@ -75,74 +75,77 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 			iconRightArrow.setVisibility(View.INVISIBLE);
 		}
 		if(username != null){
-    		if (username.equals(EMClient.getInstance().getCurrentUser())) {
-    			tvUsername.setText(EMClient.getInstance().getCurrentUser());
-    			EaseUserUtils.setUserNick(username, tvNickName);
-                EaseUserUtils.setUserAvatar(this, username, headAvatar);
-    		} else {
-    			tvUsername.setText(username);
-    			EaseUserUtils.setUserNick(username, tvNickName);
-    			EaseUserUtils.setUserAvatar(this, username, headAvatar);
-    			asyncFetchUserInfo(username);
-    		}
+//    		if (username.equals(EMClient.getInstance().getCurrentUser())) {
+//    			tvUsername.setText(EMClient.getInstance().getCurrentUser());
+//    			EaseUserUtils.setUserNick(username, tvNickName);
+//                EaseUserUtils.setUserAvatar(this, username, headAvatar);
+//    		} else {
+//    			tvUsername.setText(username);
+//    			EaseUserUtils.setUserNick(username, tvNickName);
+//    			EaseUserUtils.setUserAvatar(this, username, headAvatar);
+//    			asyncFetchUserInfo(username);
+//    		}
+			tvUsername.setText(username);
+			EaseUserUtils.setAppUserNick(username, tvNickName);
+			EaseUserUtils.setAppUserAvatar(this, username, headAvatar);
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.user_head_avatar:
-			uploadHeadPhoto();
-			break;
-		case R.id.rl_nickname:
-			final EditText editText = new EditText(this);
-			new AlertDialog.Builder(this).setTitle(R.string.setting_nickname).setIcon(android.R.drawable.ic_dialog_info).setView(editText)
-					.setPositiveButton(R.string.dl_ok, new DialogInterface.OnClickListener() {
+			case R.id.user_head_avatar:
+				uploadHeadPhoto();
+				break;
+			case R.id.rl_nickname:
+				final EditText editText = new EditText(this);
+				new AlertDialog.Builder(this).setTitle(R.string.setting_nickname).setIcon(android.R.drawable.ic_dialog_info).setView(editText)
+						.setPositiveButton(R.string.dl_ok, new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							String nickString = editText.getText().toString();
-							if (TextUtils.isEmpty(nickString)) {
-								Toast.makeText(UserProfileActivity.this, getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
-								return;
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								String nickString = editText.getText().toString();
+								if (TextUtils.isEmpty(nickString)) {
+									Toast.makeText(UserProfileActivity.this, getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
+									return;
+								}
+								updateRemoteNick(nickString);
 							}
-							updateRemoteNick(nickString);
-						}
-					}).setNegativeButton(R.string.dl_cancel, null).show();
-			break;
-		default:
-			break;
+						}).setNegativeButton(R.string.dl_cancel, null).show();
+				break;
+			default:
+				break;
 		}
 
 	}
-	
+
 	public void asyncFetchUserInfo(String username){
 		SuperChatHelper.getInstance().getUserProfileManager().asyncGetUserInfo(username, new EMValueCallBack<EaseUser>() {
-			
+
 			@Override
 			public void onSuccess(EaseUser user) {
 				if (user != null) {
-				    SuperChatHelper.getInstance().saveContact(user);
-				    if(isFinishing()){
-				        return;
-				    }
+					SuperChatHelper.getInstance().saveContact(user);
+					if(isFinishing()){
+						return;
+					}
 					tvNickName.setText(user.getNick());
 					if(!TextUtils.isEmpty(user.getAvatar())){
-						 Glide.with(UserProfileActivity.this).load(user.getAvatar()).placeholder(R.drawable.em_default_avatar).into(headAvatar);
+						Glide.with(UserProfileActivity.this).load(user.getAvatar()).placeholder(R.drawable.em_default_avatar).into(headAvatar);
 					}else{
-					    Glide.with(UserProfileActivity.this).load(R.drawable.em_default_avatar).into(headAvatar);
+						Glide.with(UserProfileActivity.this).load(R.drawable.em_default_avatar).into(headAvatar);
 					}
 				}
 			}
-			
+
 			@Override
 			public void onError(int error, String errorMsg) {
 			}
 		});
 	}
-	
-	
-	
+
+
+
 	private void uploadHeadPhoto() {
 		AlertDialog.Builder builder = new Builder(this);
 		builder.setTitle(R.string.dl_title_upload_photo);
@@ -152,24 +155,24 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 						switch (which) {
-						case 0:
-							Toast.makeText(UserProfileActivity.this, getString(R.string.toast_no_support),
-									Toast.LENGTH_SHORT).show();
-							break;
-						case 1:
-							Intent pickIntent = new Intent(Intent.ACTION_PICK,null);
-							pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-							startActivityForResult(pickIntent, REQUESTCODE_PICK);
-							break;
-						default:
-							break;
+							case 0:
+								Toast.makeText(UserProfileActivity.this, getString(R.string.toast_no_support),
+										Toast.LENGTH_SHORT).show();
+								break;
+							case 1:
+								Intent pickIntent = new Intent(Intent.ACTION_PICK,null);
+								pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+								startActivityForResult(pickIntent, REQUESTCODE_PICK);
+								break;
+							default:
+								break;
 						}
 					}
 				});
 		builder.create().show();
 	}
-	
-	
+
+
 
 	private void updateRemoteNick(final String nickName) {
 		dialog = ProgressDialog.show(this, getString(R.string.dl_update_nick), getString(R.string.dl_waiting));
@@ -207,19 +210,19 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case REQUESTCODE_PICK:
-			if (data == null || data.getData() == null) {
-				return;
-			}
-			startPhotoZoom(data.getData());
-			break;
-		case REQUESTCODE_CUTTING:
-			if (data != null) {
-				setPicToView(data);
-			}
-			break;
-		default:
-			break;
+			case REQUESTCODE_PICK:
+				if (data == null || data.getData() == null) {
+					return;
+				}
+				startPhotoZoom(data.getData());
+				break;
+			case REQUESTCODE_CUTTING:
+				if (data != null) {
+					setPicToView(data);
+				}
+				break;
+			default:
+				break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -236,10 +239,10 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		intent.putExtra("noFaceDetection", true);
 		startActivityForResult(intent, REQUESTCODE_CUTTING);
 	}
-	
+
 	/**
 	 * save the picture data
-	 * 
+	 *
 	 * @param picdata
 	 */
 	private void setPicToView(Intent picdata) {
@@ -252,7 +255,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		}
 
 	}
-	
+
 	private void uploadUserAvatar(final byte[] data) {
 		dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
 		new Thread(new Runnable() {
@@ -280,11 +283,13 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 
 		dialog.show();
 	}
-	
-	
+
+
 	public byte[] Bitmap2Bytes(Bitmap bm){
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
 		return baos.toByteArray();
 	}
 }
+
+

@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.utils.MFGT;
 
 
 public class ProfileFragment extends Fragment {
@@ -50,6 +51,7 @@ public class ProfileFragment extends Fragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_profile_view:
+                MFGT.gotoUserProfile(getActivity());
                 break;
             //red packet code : 进入零钱页面
             case R.id.tv_profile_money:
@@ -57,6 +59,7 @@ public class ProfileFragment extends Fragment {
                 break;
             //end of red packet code
             case R.id.tv_profile_setting:
+                MFGT.gotoSetting(getActivity());
                 break;
         }
     }

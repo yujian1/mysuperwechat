@@ -1,16 +1,3 @@
-/**
- * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
@@ -65,14 +52,12 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.et_password)
     EditText mEtPassword;
 
-
     private boolean progressShow;
     private boolean autoLogin = false;
 
     String currentUsername;
     String currentPassword;
-    ProgressDialog pd=null;
-
+    ProgressDialog pd;
     LoginActivity mContext;
 
     @Override
@@ -86,19 +71,19 @@ public class LoginActivity extends BaseActivity {
 
             return;
         }
-        mContext = this;
         setContentView(R.layout.em_activity_login);
         ButterKnife.bind(this);
+
         setListener();
         initView();
-
-
-
+        mContext = this;
 
     }
 
     private void initView() {
-
+        if (SuperChatHelper.getInstance().getCurrentUsernName() != null) {
+            mEtUsername.setText(SuperChatHelper.getInstance().getCurrentUsernName());
+        }
         mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(R.string.login);
@@ -126,7 +111,6 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * login
-     *
      */
     public void login() {
         if (!EaseCommonUtils.isNetWorkConnected(this)) {
@@ -173,11 +157,12 @@ public class LoginActivity extends BaseActivity {
         final long start = System.currentTimeMillis();
         // call login method
         Log.d(TAG, "EMClient.getInstance().login");
-        EMClient.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
+        EMClient.getInstance().login(currentUsername, MD5.getMessageDigest(currentPassword), new EMCallBack() {
 
             @Override
             public void onSuccess() {
                 Log.d(TAG, "login: onSuccess");
+
                 loginAppServer();
             }
 
@@ -194,7 +179,6 @@ public class LoginActivity extends BaseActivity {
                 }
                 runOnUiThread(new Runnable() {
                     public void run() {
-
                         pd.dismiss();
                         Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
                                 Toast.LENGTH_SHORT).show();
@@ -205,45 +189,37 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginAppServer() {
-        NetDao.login(mContext, currentUsername,  MD5.getMessageDigest(currentPassword), new OkHttpUtils.OnCompleteListener<String>() {
+        NetDao.login(mContext, currentUsername, currentPassword, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                L.e(TAG, "s" + s);
-                if (s!=null && s!=""){
-                    Result result = ResultUtils.getListResultFromJson(s, User.class);
-                    if (result!=null && result.isRetMsg()){
+                L.e(TAG,"s="+s);
+                if(s!=null && s!=""){
+                    Result result = ResultUtils.getResultFromJson(s, User.class);
+                    if(result!=null && result.isRetMsg()){
                         User user = (User) result.getRetData();
-                        if (user!=null) {
+                        if(user!=null) {
                             UserDao dao = new UserDao(mContext);
-                            dao.saveUser(user);
-                            SuperChatHelper.getInstance().setCurrentUser(user);
+                            dao.saveAppContact(user);
                             loginSuccess();
-
                         }
-                    }else {
+                    }else{
                         pd.dismiss();
-                        L.e(TAG,"login fail"+result);
+                        L.e(TAG,"login fail,"+result);
                     }
-                }else {
+                }else{
                     pd.dismiss();
                 }
-
             }
 
             @Override
             public void onError(String error) {
                 pd.dismiss();
-                L.e(TAG, "onError" + error);
-
-
+                L.e(TAG,"onError="+error);
             }
         });
-
     }
 
     private void loginSuccess() {
-
-
         // ** manually load all local groups and conversation
         EMClient.getInstance().groupManager().loadAllGroups();
         EMClient.getInstance().chatManager().loadAllConversations();
@@ -267,7 +243,6 @@ public class LoginActivity extends BaseActivity {
 
         finish();
     }
-
 
 
     @Override
@@ -303,4 +278,5 @@ public class LoginActivity extends BaseActivity {
             pd.dismiss();
         }
     }
+
 }

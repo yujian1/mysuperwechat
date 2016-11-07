@@ -11,6 +11,13 @@
  */
 package cn.ucai.superwechat.ui;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -49,13 +56,6 @@ import cn.ucai.superwechat.video.util.Utils;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.PathUtil;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class RecorderVideoActivity extends BaseActivity implements
 		OnClickListener, SurfaceHolder.Callback, OnErrorListener,
@@ -210,16 +210,10 @@ public class RecorderVideoActivity extends BaseActivity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 		if (mWakeLock != null) {
 			mWakeLock.release();
 			mWakeLock = null;
 		}
-
-		releaseRecorder();
-		releaseCamera();
-
-		finish();
 	}
 
 	@Override

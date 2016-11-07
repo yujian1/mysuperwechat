@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
+import cn.ucai.superwechat.SuperWeChatHelper;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
@@ -19,8 +20,6 @@ import com.parse.SaveCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.ucai.superwechat.db.SuperChatHelper;
-
 public class ParseManager {
 
 	private static final String TAG = ParseManager.class.getSimpleName();
@@ -35,8 +34,6 @@ public class ParseManager {
 	private static final String CONFIG_USERNAME = "username";
 	private static final String CONFIG_NICK = "nickname";
 	private static final String CONFIG_AVATAR = "avatar";
-	
-	private static final String parseServer = "http://parse.easemob.com/parse/";
 
 	private static ParseManager instance = new ParseManager();
 	
@@ -51,11 +48,11 @@ public class ParseManager {
 	public void onInit(Context context) {
 		Context appContext = context.getApplicationContext();
 		Parse.enableLocalDatastore(appContext);
-//		Parse.initialize(context, ParseAppID, ParseClientKey);
-		Parse.initialize(new Parse.Configuration.Builder(appContext)
-		        .applicationId(ParseAppID)
-		        .server(parseServer)
-		        .build());
+		Parse.initialize(context, ParseAppID, ParseClientKey);
+//		Parse.initialize(new Parse.Configuration.Builder(appContext)
+//		        .applicationId(ParseAppID)
+//		        .server("http://114.215.141.221:1337/parse/")
+//		        .build());
 	}
 
 	public boolean updateParseNickName(final String nickname) {
@@ -163,7 +160,7 @@ public class ParseManager {
 					String nick = pUser.getString(CONFIG_NICK);
 					ParseFile pFile = pUser.getParseFile(CONFIG_AVATAR);
 					if(callback!=null){
-					    EaseUser user = SuperChatHelper.getInstance().getContactList().get(username);
+					    EaseUser user = SuperWeChatHelper.getInstance().getContactList().get(username);
 						if(user!=null){
 							user.setNick(nick);
 							if (pFile != null && pFile.getUrl() != null) {

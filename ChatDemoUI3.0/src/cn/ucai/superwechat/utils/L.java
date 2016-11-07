@@ -2,12 +2,9 @@ package cn.ucai.superwechat.utils;
 
 import android.util.Log;
 
-/**
- * Created by clawpo on 16/9/20.
- */
 public class L {
     public static boolean isDebug = true;
-    private static final String TAG = "superwechat";
+    private static final String TAG = "fulicenter";
 
     public static void i(String msg){
         if(isDebug) {

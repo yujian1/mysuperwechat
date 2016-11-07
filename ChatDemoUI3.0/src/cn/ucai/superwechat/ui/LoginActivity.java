@@ -1,3 +1,16 @@
+/**
+ * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
@@ -24,17 +37,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.date.NetDao;
-import cn.ucai.superwechat.date.OkHttpUtils;
-import cn.ucai.superwechat.db.SuperChatDBManager;
-import cn.ucai.superwechat.db.SuperChatHelper;
+import cn.ucai.superwechat.SuperWeChatApplication;
+import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.data.NetDao;
+import cn.ucai.superwechat.data.OkHttpUtils;
+import cn.ucai.superwechat.db.SuperWeChatDBManager;
 import cn.ucai.superwechat.db.UserDao;
-import cn.ucai.superwechat.domain.Result;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.ResultUtils;
-import cn.ucai.superwechat.widget.SuperChatApplication;
 
 /**
  * Login screen
@@ -65,7 +78,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         // enter the main activity if already logged in
-        if (SuperChatHelper.getInstance().isLoggedIn()) {
+        if (SuperWeChatHelper.getInstance().isLoggedIn()) {
             autoLogin = true;
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
@@ -81,8 +94,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView() {
-        if (SuperChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtUsername.setText(SuperChatHelper.getInstance().getCurrentUsernName());
+        if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
+            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
         mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
@@ -149,10 +162,10 @@ public class LoginActivity extends BaseActivity {
     private void loginEMServer() {
         // After logout，the DemoDB may still be accessed due to async callback, so the DemoDB will be re-opened again.
         // close it before login to make sure DemoDB not overlap
-        SuperChatDBManager.getInstance().closeDB();
+        SuperWeChatDBManager.getInstance().closeDB();
 
         // reset current user name before login
-        SuperChatHelper.getInstance().setCurrentUserName(currentUsername);
+        SuperWeChatHelper.getInstance().setCurrentUserName(currentUsername);
 
         final long start = System.currentTimeMillis();
         // call login method
@@ -226,7 +239,7 @@ public class LoginActivity extends BaseActivity {
 
         // update current user's display name for APNs
         boolean updatenick = EMClient.getInstance().updateCurrentUserNick(
-                SuperChatApplication.currentUserNick.trim());
+                SuperWeChatApplication.currentUserNick.trim());
         if (!updatenick) {
             Log.e("LoginActivity", "update current user nick fail");
         }
@@ -235,7 +248,7 @@ public class LoginActivity extends BaseActivity {
             pd.dismiss();
         }
         // get user's info (this should be get from App's server or 3rd party service)
-        SuperChatHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+        SuperWeChatHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 
         Intent intent = new Intent(LoginActivity.this,
                 MainActivity.class);
@@ -251,8 +264,8 @@ public class LoginActivity extends BaseActivity {
         if (autoLogin) {
             return;
         }
-        if (SuperChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtUsername.setText(SuperChatHelper.getInstance().getCurrentUsernName());
+        if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
+            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
     }
 

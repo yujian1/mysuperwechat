@@ -16,6 +16,9 @@ package cn.ucai.superwechat.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import cn.ucai.superwechat.SuperWeChatHelper;
+
 public class DbOpenHelper extends SQLiteOpenHelper{
 
 	private static final int DATABASE_VERSION = 6;
@@ -51,7 +54,6 @@ public class DbOpenHelper extends SQLiteOpenHelper{
             + UserDao.COLUMN_NAME_DISABLED_GROUPS + " TEXT, "
             + UserDao.COLUMN_NAME_DISABLED_IDS + " TEXT);";
 
-
 	private static final String CREATE_USER_TABLE = "CREATE TABLE "
 			+ UserDao.USER_TABLE_NAME + " ("
 			+ UserDao.USER_COLUMN_NAME + " TEXT PRIMARY KEY, "
@@ -74,7 +76,7 @@ public class DbOpenHelper extends SQLiteOpenHelper{
 	}
 	
 	private static String getUserDatabaseName() {
-        return  SuperChatHelper.getInstance().getCurrentUsernName() + "_demo.db";
+        return  SuperWeChatHelper.getInstance().getCurrentUsernName() + "_demo.db";
     }
 	
 	@Override
@@ -84,7 +86,6 @@ public class DbOpenHelper extends SQLiteOpenHelper{
 		db.execSQL(CREATE_PREF_TABLE);
 		db.execSQL(ROBOT_TABLE_CREATE);
 		db.execSQL(CREATE_USER_TABLE);
-		
 	}
 
 	@Override

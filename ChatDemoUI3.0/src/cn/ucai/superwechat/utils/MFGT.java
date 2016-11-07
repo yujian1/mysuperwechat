@@ -14,7 +14,7 @@ import cn.ucai.superwechat.ui.UserProfileActivity;
 public class MFGT {
     public static void finish(Activity activity){
         activity.finish();
-        activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+        activity.overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
     }
 
     public static void startActivity(Activity context,Class<?> cls){
@@ -23,28 +23,30 @@ public class MFGT {
         startActivity(context,intent);
     }
 
-    public static void startActivity(Context context, Intent intent){
+    public static void startActivity(Context context,Intent intent){
         context.startActivity(intent);
         ((Activity)context).overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
-
     }
+
 
     public static void startActivityForResult(Activity context,Intent intent,int requestCode){
         context.startActivityForResult(intent,requestCode);
         context.overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
-    public static void gotologin(Activity context){
 
+    public static void gotoLogin(Activity context){
         startActivity(context, LoginActivity.class);
     }
+
     public static void gotoRegister(Activity context){
         startActivity(context, RegisterActivity.class);
     }
-    public static void gotoSetting(Activity context){
+
+    public static void gotoSettings(Activity context){
         startActivity(context, SettingsActivity.class);
     }
+
     public static void gotoUserProfile(Activity context){
         startActivity(context, UserProfileActivity.class);
     }
-
 }

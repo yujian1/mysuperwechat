@@ -31,10 +31,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.date.NetDao;
-import cn.ucai.superwechat.date.OkHttpUtils;
-import cn.ucai.superwechat.db.SuperChatHelper;
-import cn.ucai.superwechat.domain.Result;
+import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.data.NetDao;
+import cn.ucai.superwechat.data.OkHttpUtils;
 import cn.ucai.superwechat.utils.CommonUtils;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;
@@ -45,7 +45,7 @@ import cn.ucai.superwechat.utils.MFGT;
  */
 public class RegisterActivity extends BaseActivity {
     @BindView(R.id.img_back)
-    ImageView mimgBack;
+    ImageView mImgBack;
     @BindView(R.id.txt_title)
     TextView mTxtTitle;
     @BindView(R.id.et_username)
@@ -57,50 +57,45 @@ public class RegisterActivity extends BaseActivity {
     @BindView(R.id.et_confirm_password)
     EditText mEtConfirmPassword;
 
-    ProgressDialog pd =null;
-     String username ;
-     String nickname ;
-     String pwd ;
+    ProgressDialog pd = null;
+    String username;
+    String nickname;
+    String pwd;
     RegisterActivity mContext;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.em_activity_register);
         ButterKnife.bind(this);
-        mContext=this;
+        mContext = this;
         initView();
-
     }
 
     private void initView() {
-        mimgBack.setVisibility(View.VISIBLE);
+        mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(R.string.register);
     }
 
     public void register() {
-         username = mEtUsername.getText().toString().trim();
-         nickname = mEtNickname.getText().toString().trim();
-         pwd = mEtPassword.getText().toString().trim();
+        username = mEtUsername.getText().toString().trim();
+        nickname = mEtNickname.getText().toString().trim();
+        pwd = mEtPassword.getText().toString().trim();
         String confirm_pwd = mEtConfirmPassword.getText().toString().trim();
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_empty), Toast.LENGTH_SHORT).show();
             mEtUsername.requestFocus();
             return;
-        }else if (!username.matches("[a-zA]\\w{5,15}")){
+        }else if(!username.matches("[a-zA-Z]\\w{5,15}")){
             Toast.makeText(this, getResources().getString(R.string.illegal_user_name), Toast.LENGTH_SHORT).show();
             mEtUsername.requestFocus();
             return;
-
-
-        }else if (TextUtils.isEmpty(nickname)){
+        }else if(TextUtils.isEmpty(nickname)){
             Toast.makeText(this, getResources().getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
             mEtNickname.requestFocus();
             return;
-
-        }else if (TextUtils.isEmpty(pwd)) {
+        } else if (TextUtils.isEmpty(pwd)) {
             Toast.makeText(this, getResources().getString(R.string.Password_cannot_be_empty), Toast.LENGTH_SHORT).show();
             mEtPassword.requestFocus();
             return;
@@ -114,31 +109,29 @@ public class RegisterActivity extends BaseActivity {
         }
 
         if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(pwd)) {
-           pd = new ProgressDialog(this);
+            pd = new ProgressDialog(this);
             pd.setMessage(getResources().getString(R.string.Is_the_registered));
             pd.show();
-
             registerAppServer();
 
         }
     }
 
     private void registerAppServer() {
-        NetDao.register(mContext, username, nickname, MD5.getMessageDigest(pwd), new OkHttpUtils.OnCompleteListener<Result>() {
+        NetDao.register(mContext, username, nickname, pwd, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onSuccess(Result result) {
-                if (result==null){
+                if(result==null){
                     pd.dismiss();
                 }else {
-                    if ( result.isRetMsg()) {
+                    if (result.isRetMsg()) {
                         registerEMServer();
-
                     } else {
-                        if (result.getRetCode()== I.MSG_REGISTER_USERNAME_EXISTS){
-                            CommonUtils.showShortToast(result.getRetCode());
-
+                        if(result.getRetCode()== I.MSG_REGISTER_USERNAME_EXISTS){
+                            CommonUtils.showMsgShortToast(result.getRetCode());
+                            pd.dismiss();
                         }else {
-                            unrregisterAppServer();
+                            unregisterAppServer();
                         }
                     }
                 }
@@ -147,14 +140,11 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onError(String error) {
                 pd.dismiss();
-
             }
         });
-        registerEMServer();
-        unrregisterAppServer();
     }
 
-    private void unrregisterAppServer() {
+    private void unregisterAppServer() {
         NetDao.unregister(mContext, username, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onSuccess(Result result) {
@@ -164,10 +154,8 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onError(String error) {
                 pd.dismiss();
-
             }
         });
-
     }
 
     private void registerEMServer() {
@@ -181,13 +169,13 @@ public class RegisterActivity extends BaseActivity {
                             if (!RegisterActivity.this.isFinishing())
                                 pd.dismiss();
                             // save current user
-                            SuperChatHelper.getInstance().setCurrentUserName(username);
+                            SuperWeChatHelper.getInstance().setCurrentUserName(username);
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
                             MFGT.finish(mContext);
                         }
                     });
                 } catch (final HyphenateException e) {
-                    unrregisterAppServer();
+                    unregisterAppServer();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (!RegisterActivity.this.isFinishing())

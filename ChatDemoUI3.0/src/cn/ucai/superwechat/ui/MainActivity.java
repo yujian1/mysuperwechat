@@ -1,3 +1,16 @@
+/**
+ * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.ucai.superwechat.ui;
 
 import android.annotation.SuppressLint;
@@ -43,9 +56,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.adapter.MainTabAdpter;
 import cn.ucai.superwechat.db.InviteMessgeDao;
-import cn.ucai.superwechat.db.SuperChatHelper;
 import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.runtimepermissions.PermissionsManager;
 import cn.ucai.superwechat.runtimepermissions.PermissionsResultAction;
@@ -144,7 +157,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     private void checkLogined(Bundle savedInstanceState) {
         //make sure activity will not in background if user is logged into another device or removed
         if (savedInstanceState != null && savedInstanceState.getBoolean(Constant.ACCOUNT_REMOVED, false)) {
-            SuperChatHelper.getInstance().logout(false, null);
+            SuperWeChatHelper.getInstance().logout(false, null);
             finish();
             startActivity(new Intent(this, LoginActivity.class));
             return;
@@ -218,7 +231,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         public void onMessageReceived(List<EMMessage> messages) {
             // notify new message
             for (EMMessage message : messages) {
-                SuperChatHelper.getInstance().getNotifier().onNewMsg(message);
+                SuperWeChatHelper.getInstance().getNotifier().onNewMsg(message);
             }
             refreshUIWithMessage();
         }
@@ -455,7 +468,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
         // unregister this event listener when this activity enters the
         // background
-        SuperChatHelper sdkHelper = SuperChatHelper.getInstance();
+        SuperWeChatHelper sdkHelper = SuperWeChatHelper.getInstance();
         sdkHelper.pushActivity(this);
 
         EMClient.getInstance().chatManager().addMessageListener(messageListener);
@@ -464,7 +477,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     @Override
     protected void onStop() {
         EMClient.getInstance().chatManager().removeMessageListener(messageListener);
-        SuperChatHelper sdkHelper = SuperChatHelper.getInstance();
+        SuperWeChatHelper sdkHelper = SuperWeChatHelper.getInstance();
         sdkHelper.popActivity(this);
 
         super.onStop();
@@ -500,7 +513,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
      */
     private void showConflictDialog() {
         isConflictDialogShow = true;
-        SuperChatHelper.getInstance().logout(false, null);
+        SuperWeChatHelper.getInstance().logout(false, null);
         String st = getResources().getString(R.string.Logoff_notification);
         if (!MainActivity.this.isFinishing()) {
             // clear up global variables
@@ -537,7 +550,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
      */
     private void showAccountRemovedDialog() {
         isAccountRemovedDialogShow = true;
-        SuperChatHelper.getInstance().logout(false, null);
+        SuperWeChatHelper.getInstance().logout(false, null);
         String st5 = getResources().getString(R.string.Remove_the_notification);
         if (!MainActivity.this.isFinishing()) {
             // clear up global variables
@@ -585,7 +598,7 @@ public class MainActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                SuperChatHelper.getInstance().logout(false, new EMCallBack() {
+                SuperWeChatHelper.getInstance().logout(false, new EMCallBack() {
 
                     @Override
                     public void onSuccess() {

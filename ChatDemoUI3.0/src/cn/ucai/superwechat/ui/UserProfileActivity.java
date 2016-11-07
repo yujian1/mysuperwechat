@@ -23,25 +23,31 @@ import com.bumptech.glide.Glide;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
+import com.hyphenate.easeui.utils.EaseImageUtils;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.date.NetDao;
-import cn.ucai.superwechat.date.OkHttpUtils;
-import cn.ucai.superwechat.db.SuperChatHelper;
-import cn.ucai.superwechat.domain.Result;
+import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.data.NetDao;
+import cn.ucai.superwechat.data.OkHttpUtils;
 import cn.ucai.superwechat.utils.CommonUtils;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.ResultUtils;
 
 public class UserProfileActivity extends BaseActivity implements OnClickListener {
-    private static final String TAG=UserProfileActivity.class.getSimpleName();
+    private static final String TAG = UserProfileActivity.class.getSimpleName();
 
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CUTTING = 2;
@@ -57,8 +63,8 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
     TextView mTvUserinfoName;
     private ProgressDialog dialog;
     private RelativeLayout rlNickName;
-    User user=null;
 
+    User user = null;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -67,28 +73,28 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
         ButterKnife.bind(this);
         initView();
         initListener();
-       user = EaseUserUtils.getCurrentAppUserInfo();
-
+        user = EaseUserUtils.getCurrentAppUserInfo();
     }
 
     private void initView() {
-     mImgBack.setVisibility(View.VISIBLE);
+        mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(getString(R.string.title_user_profile));
     }
 
     private void initListener() {
-        EaseUserUtils.setCurentAppUserAvatar(this,mIvUserinfoAvatar );
+        EaseUserUtils.setCurentAppUserAvatar(this,mIvUserinfoAvatar);
         EaseUserUtils.setCurentAppUserNick(mTvUserinfoNick);
         EaseUserUtils.setCurrentAppUserName(mTvUserinfoName);
     }
+
     public void asyncFetchUserInfo(String username) {
-        SuperChatHelper.getInstance().getUserProfileManager().asyncGetUserInfo(username, new EMValueCallBack<EaseUser>() {
+        SuperWeChatHelper.getInstance().getUserProfileManager().asyncGetUserInfo(username, new EMValueCallBack<EaseUser>() {
 
             @Override
             public void onSuccess(EaseUser user) {
                 if (user != null) {
-                    SuperChatHelper.getInstance().saveContact(user);
+                    SuperWeChatHelper.getInstance().saveContact(user);
                     if (isFinishing()) {
                         return;
                     }
@@ -141,7 +147,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 
             @Override
             public void run() {
-                boolean updatenick = SuperChatHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(nickName);
+                boolean updatenick = SuperWeChatHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(nickName);
                 if (UserProfileActivity.this.isFinishing()) {
                     return;
                 }
@@ -154,7 +160,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                         }
                     });
                 } else {
-                    updateAppnick(nickName);
+                    updateAppNick(nickName);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -169,47 +175,43 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
         }).start();
     }
 
-    private void updateAppnick(String nickName) {
+    private void updateAppNick(String nickName) {
         NetDao.updateNick(this, user.getMUserName(), nickName, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                if (s!=null){
+                if(s!=null){
                     Result result = ResultUtils.getResultFromJson(s, User.class);
-                    L.e(TAG,"result"+result);
-                    if (result!=null && result.isRetMsg()){
-                        User u= (User) result.getRetData();
-                        updatelocatuser(u);
-
-                    }else {
+                    L.e(TAG,"result="+result);
+                    if(result!=null && result.isRetMsg()){
+                        User u = (User) result.getRetData();
+                        updateLocatUser(u);
+                    }else{
                         Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatenick_fail), Toast.LENGTH_SHORT)
                                 .show();
                         dialog.dismiss();
-
                     }
-                }else {
+                }else{
                     Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatenick_fail), Toast.LENGTH_SHORT)
                             .show();
                     dialog.dismiss();
-
                 }
-
             }
 
             @Override
             public void onError(String error) {
-                L.e(TAG,"error"+error);
-
+                L.e(TAG,"error="+error);
+                Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatenick_fail), Toast.LENGTH_SHORT)
+                        .show();
+                dialog.dismiss();
             }
         });
     }
 
-    private void updatelocatuser(User u) {
-        user=u;
-      SuperChatHelper.getInstance().saveAppContact(u);
+    private void updateLocatUser(User u) {
+        user = u;
+        SuperWeChatHelper.getInstance().saveAppContact(u);
         EaseUserUtils.setCurentAppUserNick(mTvUserinfoNick);
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -222,13 +224,49 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                 break;
             case REQUESTCODE_CUTTING:
                 if (data != null) {
-                    setPicToView(data);
+                    updateAppUserAvatar(data);
+//                    setPicToView(data);
                 }
                 break;
             default:
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updateAppUserAvatar(final Intent picData) {
+        dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
+        dialog.show();
+        File file = saveBitmapFile(picData);
+
+        NetDao.updateAvatar(this, user.getMUserName(), file, new OkHttpUtils.OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                if(s!=null){
+                    Result result = ResultUtils.getResultFromJson(s, User.class);
+                    L.e(TAG,"result="+result);
+                    if(result!=null && result.isRetMsg()){
+                        User u = (User) result.getRetData();
+                        SuperWeChatHelper.getInstance().saveAppContact(u);
+                        setPicToView(picData);
+                    }else{
+                        dialog.dismiss();
+                        CommonUtils.showMsgShortToast(result!=null?result.getRetCode():-1);
+//                        CommonUtils.showShortToast(result!=null?R.string.toast_updatephoto_fail);
+                    }
+                }else{
+                    dialog.dismiss();
+                    CommonUtils.showShortToast(R.string.toast_updatephoto_fail);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                L.e(TAG,"error="+error);
+                dialog.dismiss();
+                CommonUtils.showShortToast(R.string.toast_updatephoto_fail);
+            }
+        });
     }
 
     public void startPhotoZoom(Uri uri) {
@@ -253,20 +291,23 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
         Bundle extras = picdata.getExtras();
         if (extras != null) {
             Bitmap photo = extras.getParcelable("data");
-            Drawable drawable = new BitmapDrawable(getResources(),photo);
+            Drawable drawable = new BitmapDrawable(getResources(), photo);
             mIvUserinfoAvatar.setImageDrawable(drawable);
-            uploadUserAvatar(Bitmap2Bytes(photo));
+            dialog.dismiss();
+            Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatephoto_success),
+                    Toast.LENGTH_SHORT).show();
+
+//            uploadUserAvatar(Bitmap2Bytes(photo));
         }
 
     }
 
     private void uploadUserAvatar(final byte[] data) {
-        dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                final String avatarUrl = SuperChatHelper.getInstance().getUserProfileManager().uploadUserAvatar(data);
+                final String avatarUrl = SuperWeChatHelper.getInstance().getUserProfileManager().uploadUserAvatar(data);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -285,7 +326,6 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
             }
         }).start();
 
-        dialog.show();
     }
 
 
@@ -317,7 +357,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                                     Toast.makeText(UserProfileActivity.this, getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                if (nickString.equals(user.getMUserNick())){
+                                if(nickString.equals(user.getMUserNick())){
                                     CommonUtils.showShortToast(getString(R.string.toast_nick_not_modify));
                                     return;
                                 }
@@ -330,6 +370,24 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                 break;
         }
     }
+
+    public File saveBitmapFile(Intent picdata) {
+        Bundle extras = picdata.getExtras();
+        if (extras != null) {
+            Bitmap bitmap = extras.getParcelable("data");
+            String imagePath = EaseImageUtils.getImagePath(user.getMUserName()+ I.AVATAR_SUFFIX_JPG);
+            File file = new File(imagePath);//将要保存图片的路径
+            L.e("file path="+file.getAbsolutePath());
+            try {
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                bos.flush();
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return file;
+        }
+        return null;
+    }
 }
-
-

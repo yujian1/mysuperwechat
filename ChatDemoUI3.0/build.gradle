@@ -19,15 +19,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 
-
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "cn.ucai.superwechat"
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 11
+        targetSdkVersion 22
         multiDexEnabled true
     }
 
@@ -62,6 +61,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    dexOptions {
+        maxProcessCount 4 // this is the default value
+        javaMaxHeapSize "2g"
+    }
 }
 
 dependencies {
@@ -79,4 +82,6 @@ dependencies {
     compile 'com.squareup.okio:okio:1.10.0'
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
     compile 'com.google.code.gson:gson:2.7'
+
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

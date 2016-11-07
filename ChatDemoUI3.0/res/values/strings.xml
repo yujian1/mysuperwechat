@@ -2,6 +2,7 @@
 <resources>
 
     <!-- Main-->
+    <string name="app_name">微信</string>
     <string name="contacts">通讯录</string>
     <string name="me">我</string>
     <string name="discover">发现</string>
@@ -103,7 +104,6 @@
     <string name="setting_txt_about">关于微信</string>
     <string name="setting_btn_exit">退出登录</string>
 
-
     <!--消息码-->
     <string name="msg_101">msg register username exists</string>
     <string name="msg_102">msg register fail</string>
@@ -143,6 +143,6 @@
     <string name="msg_501">msg location get fail</string>
     <string name="msg_999">msg unknow</string>
     <string name="msg_1">msg illegal request</string>
-    <string name="User_name_cannot_be_modify">user name cannot be modiify</string>
-    <string name="toast_nick_not_modify">nick name not modify</string>
+    <string name="User_name_cannot_be_modify">user name connot be modify</string>
+    <string name="toast_nick_not_modify">nick name notmodify</string>
 </resources>

@@ -18,6 +18,9 @@ import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.utils.MFGT;
 
+/**
+ * Created by clawpo on 2016/11/4.
+ */
 
 public class ProfileFragment extends Fragment {
     @BindView(R.id.iv_profile_avatar)
@@ -26,6 +29,7 @@ public class ProfileFragment extends Fragment {
     TextView mTvProfileNickname;
     @BindView(R.id.tv_profile_username)
     TextView mTvProfileUsername;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -42,12 +46,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setUserInfo() {
-        EaseUserUtils.setCurentAppUserAvatar(getActivity(), mIvProfileAvatar);
+        EaseUserUtils.setCurentAppUserAvatar(getActivity(),mIvProfileAvatar);
         EaseUserUtils.setCurentAppUserNick(mTvProfileNickname);
-        EaseUserUtils.setCurrentAppUserNamewithNo(mTvProfileUsername);
+        EaseUserUtils.setCurrentAppUserNameWithNo(mTvProfileUsername);
     }
 
-    @OnClick({R.id.layout_profile_view, R.id.tv_profile_money, R.id.tv_profile_setting})
+    @OnClick({R.id.layout_profile_view, R.id.tv_profile_money, R.id.tv_profile_settings})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_profile_view:
@@ -58,8 +62,8 @@ public class ProfileFragment extends Fragment {
                 RedPacketUtil.startChangeActivity(getActivity());
                 break;
             //end of red packet code
-            case R.id.tv_profile_setting:
-                MFGT.gotoSetting(getActivity());
+            case R.id.tv_profile_settings:
+                MFGT.gotoSettings(getActivity());
                 break;
         }
     }
@@ -67,9 +71,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (((MainActivity) getActivity()).isConflict) {
+        if(((MainActivity)getActivity()).isConflict){
             outState.putBoolean("isConflict", true);
-        } else if (((MainActivity) getActivity()).getCurrentAccountRemoved()) {
+        }else if(((MainActivity)getActivity()).getCurrentAccountRemoved()){
             outState.putBoolean(Constant.ACCOUNT_REMOVED, true);
         }
     }

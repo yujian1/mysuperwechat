@@ -39,7 +39,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
 		InviteMessgeDao dao = new InviteMessgeDao(this);
 		List<InviteMessage> msgs = dao.getMessagesList();
 
-		NewFriendsMsgAdapter adapter = new NewFriendsMsgAdapter(this, 1, msgs); 
+		NewFriendsMsgAdapter adapter = new NewFriendsMsgAdapter(this, 1, msgs);
 		listView.setAdapter(adapter);
 		dao.saveUnreadMessageCount(0);
 		

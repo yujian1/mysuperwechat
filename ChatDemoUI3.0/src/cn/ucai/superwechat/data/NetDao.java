@@ -126,7 +126,6 @@ public class NetDao {
      * 登录请求
      * @param context
      * @param username
-     * @param password
      * @param listener
      */
     public static void AddContact(Context context, String username, String cuername,

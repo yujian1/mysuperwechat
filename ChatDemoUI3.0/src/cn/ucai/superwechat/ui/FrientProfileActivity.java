@@ -28,7 +28,7 @@ public class FrientProfileActivity extends BaseActivity {
     TextView mTvUserinfoNick;
     @BindView(R.id.tv_userinfo_name)
     TextView mTvUserinfoName;
-    User user = null;
+    User user ;
     @BindView(R.id.btn_add_contact)
     Button mBtnAddContact;
     @BindView(R.id.btn_send_msg)
@@ -40,11 +40,11 @@ public class FrientProfileActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_profile);
-        ButterKnife.bind(this);
         user = (User) getIntent().getSerializableExtra(I.User.USER_NAME);
         if(user==null){
             MFGT.finish(this);
         }
+        ButterKnife.bind(this);
         initView();
     }
 
@@ -81,6 +81,7 @@ public class FrientProfileActivity extends BaseActivity {
                 MFGT.gotoAddFirendMsg(this,user.getMUserName());
                 break;
             case R.id.btn_send_msg:
+                MFGT.gotoChat(this,user.getMUserName());
                 break;
             case R.id.btn_send_video:
                 break;

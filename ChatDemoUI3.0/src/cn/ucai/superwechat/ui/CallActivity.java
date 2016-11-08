@@ -16,13 +16,14 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessage.Status;
 import com.hyphenate.chat.EMTextMessageBody;
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.R;
 import com.hyphenate.exceptions.EMServiceNotReadyException;
 import com.hyphenate.media.EMLocalSurfaceView;
 import com.hyphenate.media.EMOppositeSurfaceView;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.NetUtils;
+
+import cn.ucai.superwechat.Constant;
+import cn.ucai.superwechat.R;
 
 @SuppressLint("Registered")
 public class CallActivity extends BaseActivity {

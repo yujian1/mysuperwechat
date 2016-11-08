@@ -269,20 +269,19 @@ public class SuperWeChatModel {
         return PreferenceManager.getInstance().isCustomServerEnable();
     }
 
-    public void saveAppContact(User user){
+    public void saveAppContact(User user) {
         UserDao dao = new UserDao(context);
         dao.saveAppContact(user);
     }
 
-    public Map<String, User> getAppContactList() {
+    public Map<String,User> getAppContactList() {
         UserDao dao = new UserDao(context);
         return dao.getAppContactList();
     }
 
-    public boolean saveAppContactList(List<User> contactList) {
+    public void saveAppContactList(ArrayList<User> mList) {
         UserDao dao = new UserDao(context);
-        dao.saveAppContactList(contactList);
-        return true;
+        dao.saveAppContactList(mList);
     }
 
     enum Key{

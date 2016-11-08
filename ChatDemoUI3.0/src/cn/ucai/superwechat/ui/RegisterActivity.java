@@ -48,25 +48,25 @@ public class RegisterActivity extends BaseActivity {
     ImageView mImgBack;
     @BindView(R.id.txt_title)
     TextView mTxtTitle;
-    @BindView(R.id.et_username)
-    EditText mEtUsername;
-    @BindView(R.id.et_nickname)
-    EditText mEtNickname;
-    @BindView(R.id.et_password)
-    EditText mEtPassword;
-    @BindView(R.id.et_confirm_password)
-    EditText mEtConfirmPassword;
+    @BindView(R.id.et_register_username)
+    EditText mEtRegisterUsername;
+    @BindView(R.id.et_register_nick)
+    EditText mEtRegisterNick;
+    @BindView(R.id.et_register_password)
+    EditText mEtRegisterPassword;
+    @BindView(R.id.et_register_confirm_password)
+    EditText mEtRegisterConfirmPassword;
 
+    RegisterActivity mContext;
     ProgressDialog pd = null;
     String username;
-    String nickname;
+    String nick;
     String pwd;
-    RegisterActivity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.em_activity_register);
+        setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         mContext = this;
         initView();
@@ -79,29 +79,29 @@ public class RegisterActivity extends BaseActivity {
     }
 
     public void register() {
-        username = mEtUsername.getText().toString().trim();
-        nickname = mEtNickname.getText().toString().trim();
-        pwd = mEtPassword.getText().toString().trim();
-        String confirm_pwd = mEtConfirmPassword.getText().toString().trim();
+        username = mEtRegisterUsername.getText().toString().trim();
+        nick = mEtRegisterNick.getText().toString().trim();
+        pwd = mEtRegisterPassword.getText().toString().trim();
+        String confirm_pwd = mEtRegisterConfirmPassword.getText().toString().trim();
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_empty), Toast.LENGTH_SHORT).show();
-            mEtUsername.requestFocus();
+            mEtRegisterUsername.requestFocus();
             return;
-        }else if(!username.matches("[a-zA-Z]\\w{5,15}")){
+        } else if (!username.matches("[a-zA-Z]\\w{5,15}")){
             Toast.makeText(this, getResources().getString(R.string.illegal_user_name), Toast.LENGTH_SHORT).show();
-            mEtUsername.requestFocus();
+            mEtRegisterUsername.requestFocus();
             return;
-        }else if(TextUtils.isEmpty(nickname)){
+        }else if (TextUtils.isEmpty(nick)){
             Toast.makeText(this, getResources().getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
-            mEtNickname.requestFocus();
+            mEtRegisterNick.requestFocus();
             return;
-        } else if (TextUtils.isEmpty(pwd)) {
+        }else if (TextUtils.isEmpty(pwd)) {
             Toast.makeText(this, getResources().getString(R.string.Password_cannot_be_empty), Toast.LENGTH_SHORT).show();
-            mEtPassword.requestFocus();
+            mEtRegisterPassword.requestFocus();
             return;
         } else if (TextUtils.isEmpty(confirm_pwd)) {
             Toast.makeText(this, getResources().getString(R.string.Confirm_password_cannot_be_empty), Toast.LENGTH_SHORT).show();
-            mEtConfirmPassword.requestFocus();
+            mEtRegisterConfirmPassword.requestFocus();
             return;
         } else if (!pwd.equals(confirm_pwd)) {
             Toast.makeText(this, getResources().getString(R.string.Two_input_password), Toast.LENGTH_SHORT).show();
@@ -113,23 +113,21 @@ public class RegisterActivity extends BaseActivity {
             pd.setMessage(getResources().getString(R.string.Is_the_registered));
             pd.show();
             registerAppServer();
-
         }
     }
 
     private void registerAppServer() {
-        NetDao.register(mContext, username, nickname, pwd, new OkHttpUtils.OnCompleteListener<Result>() {
+        NetDao.register(mContext, username, nick,MD5.getMessageDigest(pwd), new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onSuccess(Result result) {
-                if(result==null){
+                if (result == null) {
                     pd.dismiss();
-                }else {
-                    if (result.isRetMsg()) {
+                } else {
+                    if (result != null && result.isRetMsg()) {
                         registerEMServer();
                     } else {
-                        if(result.getRetCode()== I.MSG_REGISTER_USERNAME_EXISTS){
+                        if (result.getRetCode()== I.MSG_REGISTER_USERNAME_EXISTS){
                             CommonUtils.showMsgShortToast(result.getRetCode());
-                            pd.dismiss();
                         }else {
                             unregisterAppServer();
                         }
@@ -140,22 +138,29 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onError(String error) {
                 pd.dismiss();
+
             }
         });
+        MFGT.gotoLogin(this);
+//
+//        registerEMServer();//注册环信的服务器
+//        unregisterAppServer();
     }
 
     private void unregisterAppServer() {
         NetDao.unregister(mContext, username, new OkHttpUtils.OnCompleteListener<Result>() {
             @Override
             public void onSuccess(Result result) {
-                pd.dismiss();
+               pd.dismiss();
             }
 
             @Override
             public void onError(String error) {
                 pd.dismiss();
+
             }
         });
+
     }
 
     private void registerEMServer() {
@@ -212,6 +217,7 @@ public class RegisterActivity extends BaseActivity {
                 break;
             case R.id.btn_register:
                 register();
+
                 break;
         }
     }

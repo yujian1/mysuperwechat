@@ -15,7 +15,6 @@ package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -27,10 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
@@ -40,14 +35,16 @@ import com.hyphenate.util.EMLog;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.SuperWeChatModel;
+import cn.ucai.superwechat.utils.ExitAppUtils;
 import cn.ucai.superwechat.utils.MFGT;
 
 /**
  * settings screen
+ * 
+ * 
  */
 @SuppressWarnings({"FieldCanBeLocal"})
 public class SettingsActivity extends BaseActivity implements OnClickListener {
-	private static final String TAG = SettingsActivity.class.getSimpleName();
 
 	/**
 	 * new message notification
@@ -73,20 +70,20 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 	private TextView textview1, textview2;
 
 	private LinearLayout blacklistContainer;
-
-//	private LinearLayout userProfileContainer;
-
+	
+	private LinearLayout userProfileContainer;
+	
 	/**
 	 * logout
 	 */
 	private Button logoutBtn;
 
 	private RelativeLayout rl_switch_chatroom_leave;
-
-	private RelativeLayout rl_switch_delete_msg_when_exit_group;
-	private RelativeLayout rl_switch_auto_accept_group_invitation;
-	private RelativeLayout rl_switch_adaptive_video_encode;
-	private RelativeLayout rl_custom_server;
+	
+    private RelativeLayout rl_switch_delete_msg_when_exit_group;
+    private RelativeLayout rl_switch_auto_accept_group_invitation;
+    private RelativeLayout rl_switch_adaptive_video_encode;
+    private RelativeLayout rl_custom_server;
 
 	/**
 	 * Diagnose
@@ -96,38 +93,32 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 	 * display name for APNs
 	 */
 	private LinearLayout pushNick;
-
-	private EaseSwitchButton notifiSwitch;
-	private EaseSwitchButton soundSwitch;
-	private EaseSwitchButton vibrateSwitch;
-	private EaseSwitchButton speakerSwitch;
-	private EaseSwitchButton ownerLeaveSwitch;
-	private EaseSwitchButton switch_delete_msg_when_exit_group;
-	private EaseSwitchButton switch_auto_accept_group_invitation;
-	private EaseSwitchButton switch_adaptive_video_encode;
+	
+    private EaseSwitchButton notifiSwitch;
+    private EaseSwitchButton soundSwitch;
+    private EaseSwitchButton vibrateSwitch;
+    private EaseSwitchButton speakerSwitch;
+    private EaseSwitchButton ownerLeaveSwitch;
+    private EaseSwitchButton switch_delete_msg_when_exit_group;
+    private EaseSwitchButton switch_auto_accept_group_invitation;
+    private EaseSwitchButton switch_adaptive_video_encode;
 	private EaseSwitchButton customServerSwitch;
 
-	private SuperWeChatModel settingsModel;
-	private EMOptions chatOptions;
-	/**
-	 * ATTENTION: This was auto-generated to implement the App Indexing API.
-	 * See https://g.co/AppIndexing/AndroidStudio for more information.
-	 */
-	private GoogleApiClient client;
-
+    private SuperWeChatModel settingsModel;
+    private EMOptions chatOptions;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.em_fragment_conversation_settings);
+	 	setContentView(R.layout.em_fragment_conversation_settings);
 
-		if (savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
-			return;
+		if(savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
+            return;
 		ImageView back = (ImageView) findViewById(R.id.img_back);
 		back.setVisibility(View.VISIBLE);
 		back.setOnClickListener(this);
-		TextView title = (TextView) findViewById(R.id.txt_title);
+		TextView title= (TextView) findViewById(R.id.txt_title);
 		title.setVisibility(View.VISIBLE);
-		title.setText(getString(R.string.set));
+		title.setText(R.string.set);
 		rl_switch_notification = (RelativeLayout) findViewById(R.id.rl_switch_notification);
 		rl_switch_sound = (RelativeLayout) findViewById(R.id.rl_switch_sound);
 		rl_switch_vibrate = (RelativeLayout) findViewById(R.id.rl_switch_vibrate);
@@ -147,24 +138,24 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		switch_auto_accept_group_invitation = (EaseSwitchButton) findViewById(R.id.switch_auto_accept_group_invitation);
 		switch_adaptive_video_encode = (EaseSwitchButton) findViewById(R.id.switch_adaptive_video_encode);
 		logoutBtn = (Button) findViewById(R.id.btn_logout);
-		if (!TextUtils.isEmpty(EMClient.getInstance().getCurrentUser())) {
+		if(!TextUtils.isEmpty(EMClient.getInstance().getCurrentUser())){
 			logoutBtn.setText(getString(R.string.button_logout) + "(" + EMClient.getInstance().getCurrentUser() + ")");
 		}
 		customServerSwitch = (EaseSwitchButton) findViewById(R.id.switch_custom_server);
 
 		textview1 = (TextView) findViewById(R.id.textview1);
 		textview2 = (TextView) findViewById(R.id.textview2);
-
+		
 		blacklistContainer = (LinearLayout) findViewById(R.id.ll_black_list);
-//		userProfileContainer = (LinearLayout) findViewById(R.id.ll_user_profile);
-		llDiagnose = (LinearLayout) findViewById(R.id.ll_diagnose);
-		pushNick = (LinearLayout) findViewById(R.id.ll_set_push_nick);
-
+		userProfileContainer = (LinearLayout) findViewById(R.id.ll_user_profile);
+		llDiagnose=(LinearLayout) findViewById(R.id.ll_diagnose);
+		pushNick=(LinearLayout) findViewById(R.id.ll_set_push_nick);
+		
 		settingsModel = SuperWeChatHelper.getInstance().getModel();
 		chatOptions = EMClient.getInstance().getOptions();
-
+		
 		blacklistContainer.setOnClickListener(this);
-//		userProfileContainer.setOnClickListener(this);
+		userProfileContainer.setOnClickListener(this);
 		rl_switch_notification.setOnClickListener(this);
 		rl_switch_sound.setOnClickListener(this);
 		rl_switch_vibrate.setOnClickListener(this);
@@ -183,72 +174,71 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		if (settingsModel.getSettingMsgNotification()) {
 			notifiSwitch.openSwitch();
 		} else {
-			notifiSwitch.closeSwitch();
+		    notifiSwitch.closeSwitch();
 		}
 
 		// sound notification is switched on or not?
 		if (settingsModel.getSettingMsgSound()) {
-			soundSwitch.openSwitch();
+		    soundSwitch.openSwitch();
 		} else {
-			soundSwitch.closeSwitch();
+		    soundSwitch.closeSwitch();
 		}
 
 		// vibrate notification is switched on or not?
 		if (settingsModel.getSettingMsgVibrate()) {
-			vibrateSwitch.openSwitch();
+		    vibrateSwitch.openSwitch();
 		} else {
-			vibrateSwitch.closeSwitch();
+		    vibrateSwitch.closeSwitch();
 		}
 
 		// the speaker is switched on or not?
 		if (settingsModel.getSettingMsgSpeaker()) {
-			speakerSwitch.openSwitch();
+		    speakerSwitch.openSwitch();
 		} else {
-			speakerSwitch.closeSwitch();
+		    speakerSwitch.closeSwitch();
 		}
 
 		// if allow owner leave
-		if (settingsModel.isChatroomOwnerLeaveAllowed()) {
-			ownerLeaveSwitch.openSwitch();
-		} else {
-			ownerLeaveSwitch.closeSwitch();
+		if(settingsModel.isChatroomOwnerLeaveAllowed()){
+		    ownerLeaveSwitch.openSwitch();
+		}else{
+		    ownerLeaveSwitch.closeSwitch();
 		}
-
+		
 		// delete messages when exit group?
-		if (settingsModel.isDeleteMessagesAsExitGroup()) {
-			switch_delete_msg_when_exit_group.openSwitch();
+		if(settingsModel.isDeleteMessagesAsExitGroup()){
+		    switch_delete_msg_when_exit_group.openSwitch();
 		} else {
-			switch_delete_msg_when_exit_group.closeSwitch();
+		    switch_delete_msg_when_exit_group.closeSwitch();
 		}
-
+		
 		if (settingsModel.isAutoAcceptGroupInvitation()) {
-			switch_auto_accept_group_invitation.openSwitch();
+		    switch_auto_accept_group_invitation.openSwitch();
 		} else {
-			switch_auto_accept_group_invitation.closeSwitch();
+		    switch_auto_accept_group_invitation.closeSwitch();
 		}
-
+		
 		if (settingsModel.isAdaptiveVideoEncode()) {
-			switch_adaptive_video_encode.openSwitch();
-			EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(true);
-		} else {
-			switch_adaptive_video_encode.closeSwitch();
-			EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(false);
-		}
+            switch_adaptive_video_encode.openSwitch();
+            EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(true);
+        } else {
+            switch_adaptive_video_encode.closeSwitch();
+            EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(false);
+        }
 
-		if (settingsModel.isCustomServerEnable()) {
+		if(settingsModel.isCustomServerEnable()){
 			customServerSwitch.openSwitch();
-		} else {
+		}else{
 			customServerSwitch.closeSwitch();
 		}
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 	}
 
-
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+
+			//end of red packet code
 			case R.id.rl_switch_notification:
 				if (notifiSwitch.isSwitchOpen()) {
 					notifiSwitch.closeSwitch();
@@ -295,33 +285,33 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				}
 				break;
 			case R.id.rl_switch_chatroom_owner_leave:
-				if (ownerLeaveSwitch.isSwitchOpen()) {
+				if(ownerLeaveSwitch.isSwitchOpen()){
 					ownerLeaveSwitch.closeSwitch();
 					settingsModel.allowChatroomOwnerLeave(false);
 					chatOptions.allowChatroomOwnerLeave(false);
-				} else {
+				}else{
 					ownerLeaveSwitch.openSwitch();
 					settingsModel.allowChatroomOwnerLeave(true);
 					chatOptions.allowChatroomOwnerLeave(true);
 				}
 				break;
 			case R.id.rl_switch_delete_msg_when_exit_group:
-				if (switch_delete_msg_when_exit_group.isSwitchOpen()) {
+				if(switch_delete_msg_when_exit_group.isSwitchOpen()){
 					switch_delete_msg_when_exit_group.closeSwitch();
 					settingsModel.setDeleteMessagesAsExitGroup(false);
 					chatOptions.setDeleteMessagesAsExitGroup(false);
-				} else {
+				}else{
 					switch_delete_msg_when_exit_group.openSwitch();
 					settingsModel.setDeleteMessagesAsExitGroup(true);
 					chatOptions.setDeleteMessagesAsExitGroup(true);
 				}
 				break;
 			case R.id.rl_switch_auto_accept_group_invitation:
-				if (switch_auto_accept_group_invitation.isSwitchOpen()) {
+				if(switch_auto_accept_group_invitation.isSwitchOpen()){
 					switch_auto_accept_group_invitation.closeSwitch();
 					settingsModel.setAutoAcceptGroupInvitation(false);
 					chatOptions.setAutoAcceptGroupInvitation(false);
-				} else {
+				}else{
 					switch_auto_accept_group_invitation.openSwitch();
 					settingsModel.setAutoAcceptGroupInvitation(true);
 					chatOptions.setAutoAcceptGroupInvitation(true);
@@ -329,11 +319,11 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				break;
 			case R.id.rl_switch_adaptive_video_encode:
 				EMLog.d("switch", "" + !switch_adaptive_video_encode.isSwitchOpen());
-				if (switch_adaptive_video_encode.isSwitchOpen()) {
+				if (switch_adaptive_video_encode.isSwitchOpen()){
 					switch_adaptive_video_encode.closeSwitch();
 					settingsModel.setAdaptiveVideoEncode(false);
 					EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(false);
-				} else {
+				}else{
 					switch_adaptive_video_encode.openSwitch();
 					settingsModel.setAdaptiveVideoEncode(true);
 					EMClient.getInstance().callManager().getVideoCallHelper().setAdaptiveVideoFlag(true);
@@ -351,15 +341,15 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 			case R.id.ll_set_push_nick:
 				startActivity(new Intent(this, OfflinePushNickActivity.class));
 				break;
-//			case R.id.ll_user_profile:
-//				startActivity(new Intent(this, UserProfileActivity.class).putExtra("setting", true)
-//						.putExtra("username", EMClient.getInstance().getCurrentUser()));
-//				break;
+			case R.id.ll_user_profile:
+				startActivity(new Intent(this, UserProfileActivity.class).putExtra("setting", true)
+						.putExtra("username", EMClient.getInstance().getCurrentUser()));
+				break;
 			case R.id.switch_custom_server:
-				if (customServerSwitch.isSwitchOpen()) {
+				if(customServerSwitch.isSwitchOpen()){
 					customServerSwitch.closeSwitch();
 					settingsModel.enableCustomServer(false);
-				} else {
+				}else{
 					customServerSwitch.openSwitch();
 					settingsModel.enableCustomServer(true);
 				}
@@ -373,7 +363,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 			default:
 				break;
 		}
-
+		
 	}
 
 	void logout() {
@@ -382,32 +372,31 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		pd.setMessage(st);
 		pd.setCanceledOnTouchOutside(false);
 		pd.show();
-		SuperWeChatHelper.getInstance().logout(false, new EMCallBack() {
-
+		SuperWeChatHelper.getInstance().logout(false,new EMCallBack() {
+			
 			@Override
 			public void onSuccess() {
 				runOnUiThread(new Runnable() {
 					public void run() {
 						pd.dismiss();
 						// show login screen
-//						ExitAppUtils.getInstance().exit();
+						ExitAppUtils.getInatance().exit();
 						finish();
-						startActivity(new Intent(SettingsActivity.this, LoginActivity.class)
-								.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-
+						startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
+						
 					}
 				});
 			}
-
+			
 			@Override
 			public void onProgress(int progress, String status) {
-
+				
 			}
-
+			
 			@Override
 			public void onError(int code, String message) {
 				runOnUiThread(new Runnable() {
-
+					
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
@@ -419,39 +408,4 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		});
 	}
 
-	/**
-	 * ATTENTION: This was auto-generated to implement the App Indexing API.
-	 * See https://g.co/AppIndexing/AndroidStudio for more information.
-	 */
-	public Action getIndexApiAction() {
-		Thing object = new Thing.Builder()
-				.setName("Settings Page") // TODO: Define a title for the content shown.
-				// TODO: Make sure this auto-generated URL is correct.
-				.setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-				.build();
-		return new Action.Builder(Action.TYPE_VIEW)
-				.setObject(object)
-				.setActionStatus(Action.STATUS_TYPE_COMPLETED)
-				.build();
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		client.connect();
-		AppIndex.AppIndexApi.start(client, getIndexApiAction());
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-
-		// ATTENTION: This was auto-generated to implement the App Indexing API.
-		// See https://g.co/AppIndexing/AndroidStudio for more information.
-		AppIndex.AppIndexApi.end(client, getIndexApiAction());
-		client.disconnect();
-	}
 }

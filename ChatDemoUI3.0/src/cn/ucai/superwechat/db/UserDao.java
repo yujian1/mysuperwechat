@@ -18,6 +18,7 @@ import android.content.Context;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,12 +43,13 @@ public class UserDao {
 	public static final String USER_COLUMN_NAME = "m_user_name";
 	public static final String USER_COLUMN_NICK = "m_user_nick";
 	public static final String USER_COLUMN_AVATAR_ID = "m_user_avatar_id";
-	public static final String USER_COLUMN_AVATAR_PATH = "m_user_avatar_path";
-	public static final String USER_COLUMN_AVATAR_SUFFIX = "m_user_avatar_suffix";
 	public static final String USER_COLUMN_AVATAR_TYPE = "m_user_avatar_type";
-	public static final String USER_COLUMN_AVATAR_LASTUPDATE_TIME = "m_user_avatar_lastupdate_time";
-	
-	
+	public static final String USER_COLUMN_AVATA_PATH = "m_user_avatat_path";
+	public static final String USER_COLUMN_AVATAR_SUFFIX = "m_user_avatar_suffix";
+	public static final String USER_COLUMN_AVATAR_LASTAUPDATE_TIME = "m_user_avatar_lastupdate_time";
+
+
+
 	public UserDao(Context context) {
 	}
 
@@ -110,17 +112,26 @@ public class UserDao {
     	SuperWeChatDBManager.getInstance().saveRobotList(robotList);
     }
 
-	public void saveAppContact(User user){
+	public boolean saveUser(User user){
+		return SuperWeChatDBManager.getInstance().saveUser(user);
+	}
+	public User getUser(String username){
+		return SuperWeChatDBManager.getInstance().getUser(username);
+	}
+	public boolean updateUser(User user){
+		return SuperWeChatDBManager.getInstance().updateUser(user);
+	}
+
+	public void saveAppContact(User user) {
 		SuperWeChatDBManager.getInstance().saveAppContact(user);
 	}
 
 
-	public Map<String, User> getAppContactList() {
-
+	public Map<String,User> getAppContactList() {
 		return SuperWeChatDBManager.getInstance().getAppContactList();
 	}
 
-	public void saveAppContactList(List<User> contactList) {
-		SuperWeChatDBManager.getInstance().saveAppContactList(contactList);
+	public void saveAppContactList(ArrayList<User> mList) {
+		SuperWeChatDBManager.getInstance().saveAppContactList(mList);
 	}
 }

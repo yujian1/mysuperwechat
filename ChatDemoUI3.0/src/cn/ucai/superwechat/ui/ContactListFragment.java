@@ -40,6 +40,7 @@ import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.widget.ContactItemView;
 
 /**
@@ -130,7 +131,7 @@ public class ContactListFragment extends EaseContactListFragment {
         });
 
         
-        // 进入添加好友页
+         //进入添加好友页
         titleBar.getRightLayout().setOnClickListener(new OnClickListener() {
 
             @Override
@@ -142,6 +143,7 @@ public class ContactListFragment extends EaseContactListFragment {
         
         contactSyncListener = new ContactSyncListener();
         SuperWeChatHelper.getInstance().addSyncContactListener(contactSyncListener);
+        
         blackListSyncListener = new BlackListSyncListener();
         SuperWeChatHelper.getInstance().addSyncBlackListListener(blackListSyncListener);
         
@@ -184,7 +186,7 @@ public class ContactListFragment extends EaseContactListFragment {
                 break;
             case R.id.group_item:
                 // 进入群聊列表页面
-                startActivity(new Intent(getActivity(), GroupsActivity.class));
+                MFGT.gotoNewFriendsMsg(getActivity());
                 break;
 //            case R.id.chat_room_item:
 //                //进入聊天室列表页面
@@ -235,7 +237,7 @@ public class ContactListFragment extends EaseContactListFragment {
 	/**
 	 * delete contact
 	 * 
-
+	 * @param tobeDeleteUser
 	 */
 	public void deleteContact(final EaseUser tobeDeleteUser) {
 		String st1 = getResources().getString(R.string.deleting);

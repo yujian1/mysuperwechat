@@ -5,9 +5,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
+import com.hyphenate.easeui.widget.EaseTitleBar;
+
 import cn.ucai.superwechat.SuperWeChatModel;
 import cn.ucai.superwechat.R;
-import com.hyphenate.easeui.widget.EaseTitleBar;
 
 public class SetServersActivity extends BaseActivity {
 

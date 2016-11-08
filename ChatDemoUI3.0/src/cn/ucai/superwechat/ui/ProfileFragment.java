@@ -18,9 +18,6 @@ import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.utils.MFGT;
 
-/**
- * Created by clawpo on 2016/11/4.
- */
 
 public class ProfileFragment extends Fragment {
     @BindView(R.id.iv_profile_avatar)
@@ -46,12 +43,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setUserInfo() {
-        EaseUserUtils.setCurentAppUserAvatar(getActivity(),mIvProfileAvatar);
-        EaseUserUtils.setCurentAppUserNick(mTvProfileNickname);
-        EaseUserUtils.setCurrentAppUserNameWithNo(mTvProfileUsername);
+        EaseUserUtils.setCuentAppUserAvatar(getActivity(),mIvProfileAvatar);
+        EaseUserUtils.setCuentAppUserNick(mTvProfileNickname);
+        EaseUserUtils.setCuentAppUserNameWithNo(mTvProfileUsername);
     }
 
-    @OnClick({R.id.layout_profile_view, R.id.tv_profile_money, R.id.tv_profile_settings})
+    @OnClick({R.id.layout_profile_view, R.id.tv_profile_money, R.id.tv_profile_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_profile_view:
@@ -61,13 +58,11 @@ public class ProfileFragment extends Fragment {
             case R.id.tv_profile_money:
                 RedPacketUtil.startChangeActivity(getActivity());
                 break;
-            //end of red packet code
-            case R.id.tv_profile_settings:
-                MFGT.gotoSettings(getActivity());
+            case R.id.tv_profile_setting:
+                MFGT.gotoSetting(getActivity());
                 break;
         }
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

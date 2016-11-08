@@ -61,7 +61,6 @@ import cn.ucai.superwechat.ui.ChatActivity;
 import cn.ucai.superwechat.ui.MainActivity;
 import cn.ucai.superwechat.ui.VideoCallActivity;
 import cn.ucai.superwechat.ui.VoiceCallActivity;
-import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.PreferenceManager;
 
 public class SuperWeChatHelper {
@@ -95,7 +94,8 @@ public class SuperWeChatHelper {
 	
 	private SuperWeChatModel demoModel = null;
 
-    private Map<String, User> appContactList;
+    private User currentUser = null;
+    private Map<String , User> appContactList;
 	
 	/**
      * sync groups status listener
@@ -221,7 +221,7 @@ public class SuperWeChatHelper {
             }
 
             @Override
-            public User getAppUser(String username) {
+            public User getAppUser(String username){
                 return getAppUserInfo(username);
             }
         });
@@ -736,13 +736,11 @@ public class SuperWeChatHelper {
         // You'd better cache it if you get it from your server
         User user = null;
         user = getAppContactList().get(username);
-
         // if user is not in your contacts, set inital letter for him/her
         if(user == null){
             user = new User(username);
             EaseCommonUtils.setAppUserInitialLetter(user);
         }
-        L.e(TAG,"user="+user);
         return user;
     }
 	
@@ -866,12 +864,11 @@ public class SuperWeChatHelper {
 	public SuperWeChatModel getModel(){
         return (SuperWeChatModel) demoModel;
     }
-	
-	/**
-	 * update contact list
-	 * 
-	 * @param aContactList
-	 */
+
+    /**
+     * update contact list
+     * @param aContactList
+     */
 	public void setContactList(Map<String, EaseUser> aContactList) {
 		if(aContactList == null){
 		    if (contactList != null) {
@@ -939,9 +936,9 @@ public class SuperWeChatHelper {
 		return robotList;
 	}
 
-	 /**
+
+    /**
      * update user list to cache and database
-     *
      * @param contactInfoList
      */
     public void updateContactList(List<EaseUser> contactInfoList) {
@@ -1250,9 +1247,8 @@ public class SuperWeChatHelper {
         isBlackListSyncedWithServer = false;
 
         isGroupAndContactListenerRegisted = false;
-
+        
         setContactList(null);
-        setAppContactList(null);
         setRobotList(null);
         getUserProfileManager().reset();
         SuperWeChatDBManager.getInstance().closeDB();
@@ -1266,11 +1262,15 @@ public class SuperWeChatHelper {
         easeUI.popActivity(activity);
     }
 
-    /**
-     * update contact list
-     *
-     * @param aContactList
-     */
+    public User getCurrentUser() {
+
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
     public void setAppContactList(Map<String, User> aContactList) {
         if(aContactList == null){
             if (appContactList != null) {
@@ -1296,22 +1296,20 @@ public class SuperWeChatHelper {
      * @return
      */
     public Map<String, User> getAppContactList() {
-        L.e(TAG,"getAppContactList,appContactList="+appContactList);
-        if (isLoggedIn() && (appContactList == null || appContactList.size()==0)) {
+        if (isLoggedIn() && appContactList == null) {
             appContactList = demoModel.getAppContactList();
         }
 
         // return a empty non-null object to avoid app crash
-        if(appContactList == null){
+        if(contactList == null){
             return new Hashtable<String, User>();
         }
 
-        L.e(TAG,"getAppContactList,appContactList="+appContactList.size());
         return appContactList;
     }
+
     /**
      * update user list to cache and database
-     *
      * @param contactInfoList
      */
     public void updateAppContactList(List<User> contactInfoList) {

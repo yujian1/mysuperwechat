@@ -30,8 +30,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-import cn.ucai.superwechat.BuildConfig;
-
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.security.MessageDigest;
@@ -40,6 +38,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import cn.ucai.superwechat.BuildConfig;
 
 /**
  * This class memory caching of bitmaps in conjunction with the

@@ -6,26 +6,28 @@ import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatApplication;
 
+/**
+ * Created by clawpo on 16/9/20.
+ */
 public class CommonUtils {
     public static void showLongToast(String msg){
-        Toast.makeText(SuperWeChatApplication.applicationContext,msg,Toast.LENGTH_LONG).show();
+        Toast.makeText(SuperWeChatApplication.getInstance(),msg,Toast.LENGTH_LONG).show();
     }
     public static void showShortToast(String msg){
-        Toast.makeText(SuperWeChatApplication.applicationContext,msg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(SuperWeChatApplication.getInstance(),msg,Toast.LENGTH_SHORT).show();
     }
     public static void showLongToast(int rId){
-        showLongToast(SuperWeChatApplication.applicationContext.getString(rId));
+        showLongToast(SuperWeChatApplication.getInstance().getString(rId));
     }
     public static void showShortToast(int rId){
-        showShortToast(SuperWeChatApplication.applicationContext.getString(rId));
+        showShortToast(SuperWeChatApplication.getInstance().getString(rId));
     }
-
-    public static void showMsgShortToast(int msgId){
-        if(msgId>0) {
+    public static void showMsgShortToast(int magId){
+        if (magId>0){
             showShortToast(SuperWeChatApplication.getInstance().getResources()
-                    .getIdentifier(I.MSG_PREFIX_MSG+msgId,"string",
+                    .getIdentifier(I.MSG_PREFIX_MSG+magId,"string",
                             SuperWeChatApplication.getInstance().getPackageName()));
-        }else{
+        }else {
             showShortToast(R.string.msg_1);
         }
     }

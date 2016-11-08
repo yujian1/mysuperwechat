@@ -18,15 +18,14 @@ allprojects {
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
-
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "cn.ucai.superwechat"
         minSdkVersion 11
-        targetSdkVersion 22
+        targetSdkVersion 23
         multiDexEnabled true
     }
 
@@ -61,27 +60,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    dexOptions {
-        maxProcessCount 4 // this is the default value
-        javaMaxHeapSize "2g"
-    }
 }
 
 dependencies {
     compile project(':redpacketlibrary')
     compile project(':EaseUI')
-    compile fileTree(dir: 'libs', include: '*.jar', exclude: 'android-support-multidex.jar')
+    compile fileTree(include: '*.jar', exclude: 'android-support-multidex.jar', dir: 'libs')
     //考虑到在eclipse中,直接使用源码
-//    compile ('com.anthonycr.grant:permissions:1.0'){
-//        exclude module: 'support-v4'
-//    }
+    //    compile ('com.anthonycr.grant:permissions:1.0'){
+    //        exclude module: 'support-v4'
+    //    }
+    compile files('libs/android-support-multidex.jar')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okio:okio:1.10.0'
-    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+    compile 'com.squareup.okio:okio:1.11.0'
     compile 'com.google.code.gson:gson:2.7'
-
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+    compile 'com.android.support:support-v4:23.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }

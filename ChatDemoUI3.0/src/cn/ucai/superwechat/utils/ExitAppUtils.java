@@ -6,29 +6,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by clawpo on 2016/11/4.
+ * Created by Angela on 2016/11/5.
  */
 
-public class ExitAppUtils {
-    List<Activity> mActivityList = new LinkedList<>();
-    private static ExitAppUtils instance = new ExitAppUtils();
+public class ExitAppUtils  {
+    List<Activity> mActivityList= new LinkedList<>();
+    private static ExitAppUtils inatance = new ExitAppUtils();
 
     private ExitAppUtils(){}
-
-    public static ExitAppUtils getInstance(){
-        return instance;
-    }
-
+    public static ExitAppUtils getInatance(){
+         return inatance;
+     }
     public void addActivity(Activity activity){
         mActivityList.add(activity);
     }
-
     public void delActivity(Activity activity){
         mActivityList.remove(activity);
     }
-
     public void exit(){
-        for (Activity activity: mActivityList){
+        for (Activity activity:mActivityList){
             activity.finish();
         }
     }

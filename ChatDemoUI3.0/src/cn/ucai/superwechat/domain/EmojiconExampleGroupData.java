@@ -1,12 +1,13 @@
 package cn.ucai.superwechat.domain;
 
-import cn.ucai.superwechat.SuperWeChatApplication;
-import cn.ucai.superwechat.R;
 import com.hyphenate.easeui.domain.EaseEmojicon;
 import com.hyphenate.easeui.domain.EaseEmojicon.Type;
 import com.hyphenate.easeui.domain.EaseEmojiconGroupEntity;
 
 import java.util.Arrays;
+
+import cn.ucai.superwechat.SuperWeChatApplication;
+import cn.ucai.superwechat.R;
 
 public class EmojiconExampleGroupData {
     

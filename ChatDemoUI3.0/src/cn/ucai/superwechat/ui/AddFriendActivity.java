@@ -2,7 +2,6 @@ package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,10 +16,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.ucai.superwechat.I;
+import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.utils.MFGT;
 
-public class AddFriendActivity extends AppCompatActivity {
+/**
+ * Created by Angela on 2016/11/7.
+ */
 
+public class AddFriendActivity extends BaseActivity {
     @BindView(R.id.img_back)
     ImageView mImgBack;
     @BindView(R.id.txt_title)
@@ -29,6 +32,7 @@ public class AddFriendActivity extends AppCompatActivity {
     Button mBtnSend;
     @BindView(R.id.et_msg)
     EditText mEtMsg;
+
     private ProgressDialog progressDialog;
     String username;
     String msg;
@@ -38,8 +42,8 @@ public class AddFriendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
         ButterKnife.bind(this);
-        username=getIntent().getStringExtra(I.User.USER_NAME);
-        if (username==null){
+        username = getIntent().getStringExtra(I.User.USER_NAME);
+        if(username==null){
             MFGT.finish(this);
         }
         initView();
@@ -50,17 +54,16 @@ public class AddFriendActivity extends AppCompatActivity {
         mTxtTitle.setVisibility(View.VISIBLE);
         mTxtTitle.setText(getString(R.string.add_friend));
         mBtnSend.setVisibility(View.VISIBLE);
-         msg=getString(R.string.addcontact_send_msg_prefix)
+        msg = getString(R.string.addcontact_send_msg_prefix)
                 + EaseUserUtils.getCurrentAppUserInfo().getMUserNick();
         mEtMsg.setText(msg);
-
-
     }
 
     @OnClick({R.id.img_back, R.id.btn_send})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
+                MFGT.finish(this);
                 break;
             case R.id.btn_send:
                 sendMsg();
@@ -69,15 +72,11 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void sendMsg() {
-
         progressDialog = new ProgressDialog(this);
         String stri = getResources().getString(R.string.addcontact_adding);
         progressDialog.setMessage(stri);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-
-
-
 
         new Thread(new Runnable() {
             public void run() {

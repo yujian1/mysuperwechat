@@ -40,15 +40,19 @@ import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.ResultUtils;
 
 public class AddContactActivity extends BaseActivity {
-    private  final  static String TAG=AddContactActivity.class.getSimpleName();
+    private static final String TAG=AddContactActivity.class.getSimpleName();
+
     @BindView(R.id.img_back)
     ImageView mImgBack;
-    @BindView(R.id.txt_title)
-    TextView mTxtTitle;
     @BindView(R.id.txt_right)
     TextView mTxtRight;
     @BindView(R.id.et_username)
-    EditText EtUsername;
+    EditText mEtUsername;
+    @BindView(R.id.txt_title)
+    TextView mTxtTitle;
+    //    private RelativeLayout searchedUserLayout;
+//    private TextView nameText;
+//    private Button searchBtn;
     private String toAddUsername;
     private ProgressDialog progressDialog;
 
@@ -58,23 +62,32 @@ public class AddContactActivity extends BaseActivity {
         setContentView(R.layout.em_activity_add_contact);
         ButterKnife.bind(this);
         initView();
-
+//        TextView mTextView = (TextView) findViewById(R.id.add_list_friends);
+//
+//        mEtUsername = (EditText) findViewById(R.id.edit_note);
+//        String strAdd = getResources().getString(R.string.add_friend);
+//        mTextView.setText(strAdd);
+//        String strUserName = getResources().getString(R.string.user_name);
+//        mEtUsername.setHint(strUserName);
+//        searchedUserLayout = (RelativeLayout) findViewById(R.id.ll_user);
+//        nameText = (TextView) findViewById(R.id.name);
+//        searchBtn = (Button) findViewById(R.id.search);
     }
 
     private void initView() {
         mImgBack.setVisibility(View.VISIBLE);
-        mTxtTitle.setVisibility(View.VISIBLE);
         mTxtRight.setVisibility(View.VISIBLE);
-        mTxtTitle.setText(R.string.menu_addfriend);
-        mTxtRight.setText(R.string.search);
+        mTxtTitle.setVisibility(View.VISIBLE);
+        mTxtTitle.setText(getString(R.string.menu_addfriend));
+        mTxtRight.setText(getString(R.string.search));
     }
 
 
-    /**
-     * search contact
-     */
+
     public void searchContact() {
-        final String name = EtUsername.getText().toString().trim();
+        final String name = mEtUsername.getText().toString().trim();
+//        String saveText = searchBtn.getText().toString();
+
             toAddUsername = name;
             if (TextUtils.isEmpty(name)) {
                 new EaseAlertDialog(this, R.string.Please_enter_a_username).show();
@@ -86,62 +99,54 @@ public class AddContactActivity extends BaseActivity {
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
 
-            searchAppUser();
+        searchAppUser();
 
-        }
+
+    }
 
     private void searchAppUser() {
         NetDao.searchUser(this, toAddUsername, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                progressDialog.dismiss();
-                if (s!=null){
-                    Result result = ResultUtils.getResultFromJson(s, User.class);
-                    L.e(TAG,"searchAppUser,result"+result);
+                if (s!=null) {
+                    Result result= ResultUtils.getResultFromJson(s, User.class);
                     if (result!=null && result.isRetMsg()){
                         User user = (User) result.getRetData();
                         if (user!=null){
-                            MFGT.gotoAddFirendProfile(AddContactActivity.this,user);
-
+                            MFGT.gotoFriendProfile(AddContactActivity.this,user);
                         }
-
                     }else {
-                        CommonUtils.showShortToast(R.string.msg_104);
-
+                        CommonUtils.showLongToast(R.string.msg_104);
                     }
                 }else {
-                    CommonUtils.showShortToast(R.string.msg_104);
-
-
+                    CommonUtils.showLongToast(R.string.msg_104);
                 }
 
             }
 
             @Override
             public void onError(String error) {
-                L.e(TAG,"error"+error);
+                L.e(TAG,"error="+error);
                 progressDialog.dismiss();
-                CommonUtils.showShortToast(R.string.msg_104);
-
-
+                CommonUtils.showLongToast(R.string.msg_104);
             }
         });
     }
 
-
     /**
-     *  add contact
+     * add contact
+     *
      * @param view
      */
     public void addContact(View view) {
-        if (EMClient.getInstance().getCurrentUser().equals(EtUsername.getText().toString())) {
+        if (EMClient.getInstance().getCurrentUser().equals(mEtUsername.getText().toString())) {
             new EaseAlertDialog(this, R.string.not_add_myself).show();
             return;
         }
 
-        if (SuperWeChatHelper.getInstance().getContactList().containsKey(EtUsername.getText().toString())) {
+        if (SuperWeChatHelper.getInstance().getContactList().containsKey(mEtUsername.getText().toString())) {
             //let the user know the contact already in your contact list
-            if (EMClient.getInstance().contactManager().getBlackListUsernames().contains(EtUsername.getText().toString())) {
+            if (EMClient.getInstance().contactManager().getBlackListUsernames().contains(mEtUsername.getText().toString())) {
                 new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
                 return;
             }
@@ -177,6 +182,8 @@ public class AddContactActivity extends BaseActivity {
             }
         }).start();
     }
+
+
 
     @OnClick({R.id.img_back, R.id.txt_right})
     public void onClick(View view) {

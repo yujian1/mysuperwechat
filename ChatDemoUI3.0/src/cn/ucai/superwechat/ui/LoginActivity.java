@@ -51,7 +51,6 @@ import cn.ucai.superwechat.utils.ResultUtils;
 
 /**
  * Login screen
- *
  */
 public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
@@ -60,42 +59,39 @@ public class LoginActivity extends BaseActivity {
     ImageView mImgBack;
     @BindView(R.id.txt_title)
     TextView mTxtTitle;
-    @BindView(R.id.et_username)
-    EditText mEtUsername;
-    @BindView(R.id.et_password)
-    EditText mEtPassword;
+    @BindView(R.id.et_login_username)
+    EditText mEtLoginUsername;
+    @BindView(R.id.et_login_password)
+    EditText mEtLoginPassword;
 
     private boolean progressShow;
     private boolean autoLogin = false;
-
+    ProgressDialog pd = null;
+    LoginActivity mContext;
     String currentUsername;
     String currentPassword;
-    ProgressDialog pd;
-    LoginActivity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+            super.onCreate(savedInstanceState);
 
-        // enter the main activity if already logged in
-        if (SuperWeChatHelper.getInstance().isLoggedIn()) {
-            autoLogin = true;
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            // enter the main activity if already logged in
+            if (SuperWeChatHelper.getInstance().isLoggedIn()) {
+                autoLogin = true;
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                return;
+            }
+            setContentView(R.layout.activity_login);
+            ButterKnife.bind(this);
 
-            return;
+            setListener();
+            initview();
+            mContext = this;
         }
-        setContentView(R.layout.em_activity_login);
-        ButterKnife.bind(this);
 
-        setListener();
-        initView();
-        mContext = this;
-
-    }
-
-    private void initView() {
+    private void initview() {
         if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
+            mEtLoginUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
         mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
@@ -104,10 +100,10 @@ public class LoginActivity extends BaseActivity {
 
     private void setListener() {
         // if user changed, clear the password
-        mEtUsername.addTextChangedListener(new TextWatcher() {
+        mEtLoginUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEtPassword.setText(null);
+                mEtLoginPassword.setText(null);
             }
 
             @Override
@@ -124,14 +120,15 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * login
+     *
      */
     public void login() {
         if (!EaseCommonUtils.isNetWorkConnected(this)) {
             Toast.makeText(this, R.string.network_isnot_available, Toast.LENGTH_SHORT).show();
             return;
         }
-        currentUsername = mEtUsername.getText().toString().trim();
-        currentPassword = mEtPassword.getText().toString().trim();
+        currentUsername = mEtLoginUsername.getText().toString().trim();
+        currentPassword = mEtLoginPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(currentUsername)) {
             Toast.makeText(this, R.string.User_name_cannot_be_empty, Toast.LENGTH_SHORT).show();
@@ -143,7 +140,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         progressShow = true;
-        pd = new ProgressDialog(mContext);
+        pd = new ProgressDialog(LoginActivity.this);
         pd.setCanceledOnTouchOutside(false);
         pd.setOnCancelListener(new OnCancelListener() {
 
@@ -155,7 +152,6 @@ public class LoginActivity extends BaseActivity {
         });
         pd.setMessage(getString(R.string.Is_landing));
         pd.show();
-
         loginEMServer();
     }
 
@@ -175,7 +171,6 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "login: onSuccess");
-
                 loginAppServer();
             }
 
@@ -202,32 +197,33 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginAppServer() {
-        NetDao.login(mContext, currentUsername, currentPassword, new OkHttpUtils.OnCompleteListener<String>() {
+        NetDao.login(mContext, currentUsername, MD5.getMessageDigest(currentPassword), new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                L.e(TAG,"s="+s);
+                L.e(TAG,"s= "+s);
                 if(s!=null && s!=""){
                     Result result = ResultUtils.getResultFromJson(s, User.class);
                     if(result!=null && result.isRetMsg()){
                         User user = (User) result.getRetData();
-                        if(user!=null) {
+                        if(user!=null){
                             UserDao dao = new UserDao(mContext);
-                            dao.saveAppContact(user);
+                            dao.saveUser(user);
+                            SuperWeChatHelper.getInstance().setCurrentUser(user);
                             loginSuccess();
+                        }else {
+                            pd.dismiss();
+                            L.e(TAG,"login fail ="+result.getRetCode());
                         }
-                    }else{
+                    }else {
                         pd.dismiss();
-                        L.e(TAG,"login fail,"+result);
                     }
-                }else{
-                    pd.dismiss();
                 }
             }
 
             @Override
             public void onError(String error) {
+                L.e(TAG,"error= "+error);
                 pd.dismiss();
-                L.e(TAG,"onError="+error);
             }
         });
     }
@@ -257,7 +253,6 @@ public class LoginActivity extends BaseActivity {
         finish();
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -265,11 +260,11 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
+            mEtLoginUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
     }
 
-    @OnClick({R.id.img_back, R.id.btn_login, R.id.btn_register})
+    @OnClick({R.id.img_back, R.id.btn_login, R.id.login_register})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
@@ -278,12 +273,11 @@ public class LoginActivity extends BaseActivity {
             case R.id.btn_login:
                 login();
                 break;
-            case R.id.btn_register:
-                MFGT.gotoRegister(this);
+            case R.id.login_register:
+                MFGT.gotoRegister(mContext);
                 break;
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -291,5 +285,4 @@ public class LoginActivity extends BaseActivity {
             pd.dismiss();
         }
     }
-
 }

@@ -67,7 +67,7 @@ public class SuperWeChatDBManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Map<String, EaseUser> users = new Hashtable<String, EaseUser>();
         if (db.isOpen()) {
-            Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME /* + " desc" */, null);
+            Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME  + " order by "+InviteMessgeDao.COLUMN_NAME_FROM+" desc " , null);
             while (cursor.moveToNext()) {
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_ID));
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));

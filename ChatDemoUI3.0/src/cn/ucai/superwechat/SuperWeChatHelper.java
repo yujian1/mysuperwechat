@@ -48,9 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.SuperWeChatModel;
 import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.data.NetDao;
 import cn.ucai.superwechat.data.OkHttpUtils;
@@ -233,7 +230,7 @@ public class SuperWeChatHelper {
             }
         });
 
-        //set options 
+        //set options
         easeUI.setSettingsProvider(new EaseSettingsProvider() {
 
             @Override
@@ -635,8 +632,10 @@ public class SuperWeChatHelper {
                             Result result = ResultUtils.getResultFromJson(s, User.class);
                             if(result!=null && result.isRetMsg()){
                                 User u = (User) result.getRetData();
-                                saveAppContact(u);
-                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                if(u!=null) {
+                                    saveAppContact(u);
+                                    broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                }
                             }
                         }
                     }
@@ -919,7 +918,7 @@ public class SuperWeChatHelper {
     }
 
     /**
-     * save single contact 
+     * save single contact
      */
     public void saveContact(EaseUser user){
         contactList.put(user.getUsername(), user);
@@ -1365,4 +1364,3 @@ public class SuperWeChatHelper {
         getAppContactList().remove(username);
         demoModel.delAppContact(username);
     }
-}

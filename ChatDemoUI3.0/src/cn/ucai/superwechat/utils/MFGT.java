@@ -28,6 +28,7 @@ public class MFGT {
 
     /**
      * 跳转主页面
+     *
      * @param context
      */
     public static void gotoMainActivity(Activity context){
@@ -134,10 +135,10 @@ public class MFGT {
         startActivity(context, NewFriendsMsgActivity.class);
     }
         public static void gotoChat(Activity context,String username){
-                Intent intent = new Intent();
+            Intent intent = new Intent();
                intent.setClass(context,ChatActivity.class);
                intent.putExtra("userId",username);
-                startActivity(context, intent);
+               startActivity(context, intent);
            }
 
 }

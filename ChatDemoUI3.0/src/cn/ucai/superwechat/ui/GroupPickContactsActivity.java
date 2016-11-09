@@ -1,16 +1,3 @@
-/**
- * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cn.ucai.superwechat.ui;
 
 import android.content.Context;
@@ -30,7 +17,7 @@ import android.widget.TextView;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.easeui.adapter.EaseContactAdapter;
-import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.widget.EaseSidebar;
 
 import java.util.ArrayList;
@@ -39,8 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatHelper;
 
 public class GroupPickContactsActivity extends BaseActivity {
 	/** if this is a new group */
@@ -65,29 +52,29 @@ public class GroupPickContactsActivity extends BaseActivity {
 		if(existMembers == null)
 			existMembers = new ArrayList<String>();
 		// get contact list
-		final List<EaseUser> alluserList = new ArrayList<EaseUser>();
-		for (EaseUser user : SuperWeChatHelper.getInstance().getContactList().values()) {
-			if (!user.getUsername().equals(Constant.NEW_FRIENDS_USERNAME) & !user.getUsername().equals(Constant.GROUP_USERNAME) & !user.getUsername().equals(Constant.CHAT_ROOM) & !user.getUsername().equals(Constant.CHAT_ROBOT))
+		final List<User> alluserList = new ArrayList<User>();
+		for (User user : SuperWeChatHelper.getInstance().getAppContactList().values()) {
+			if (!user.getMUserName().equals(Constant.NEW_FRIENDS_USERNAME) & !user.getMUserName().equals(Constant.GROUP_USERNAME) & !user.getMUserName().equals(Constant.CHAT_ROOM) & !user.getMUserName().equals(Constant.CHAT_ROBOT))
 				alluserList.add(user);
 		}
 		// sort the list
-        Collections.sort(alluserList, new Comparator<EaseUser>() {
+		Collections.sort(alluserList, new Comparator<User>() {
 
-            @Override
-            public int compare(EaseUser lhs, EaseUser rhs) {
-                if(lhs.getInitialLetter().equals(rhs.getInitialLetter())){
-                    return lhs.getNick().compareTo(rhs.getNick());
-                }else{
-                    if("#".equals(lhs.getInitialLetter())){
-                        return 1;
-                    }else if("#".equals(rhs.getInitialLetter())){
-                        return -1;
-                    }
-                    return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
-                }
-                
-            }
-        });
+			@Override
+			public int compare(User lhs, User rhs) {
+				if(lhs.getInitialLetter().equals(rhs.getInitialLetter())){
+					return lhs.getMUserNick().compareTo(rhs.getMUserNick());
+				}else{
+					if("#".equals(lhs.getInitialLetter())){
+						return 1;
+					}else if("#".equals(rhs.getInitialLetter())){
+						return -1;
+					}
+					return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
+				}
+
+			}
+		});
 
 		ListView listView = (ListView) findViewById(R.id.list);
 		contactAdapter = new PickContactAdapter(this, R.layout.em_row_contact_with_checkbox, alluserList);
@@ -106,7 +93,7 @@ public class GroupPickContactsActivity extends BaseActivity {
 
 	/**
 	 * save selected members
-	 * 
+	 *
 	 * @param v
 	 */
 	public void save(View v) {
@@ -117,14 +104,14 @@ public class GroupPickContactsActivity extends BaseActivity {
 
 	/**
 	 * get selected members
-	 * 
+	 *
 	 * @return
 	 */
 	private List<String> getToBeAddMembers() {
 		List<String> members = new ArrayList<String>();
 		int length = contactAdapter.isCheckedArray.length;
 		for (int i = 0; i < length; i++) {
-			String username = contactAdapter.getItem(i).getUsername();
+			String username = contactAdapter.getItem(i).getMUserName();
 			if (contactAdapter.isCheckedArray[i] && !existMembers.contains(username)) {
 				members.add(username);
 			}
@@ -140,7 +127,7 @@ public class GroupPickContactsActivity extends BaseActivity {
 
 		private boolean[] isCheckedArray;
 
-		public PickContactAdapter(Context context, int resource, List<EaseUser> users) {
+		public PickContactAdapter(Context context, int resource, List<User> users) {
 			super(context, resource, users);
 			isCheckedArray = new boolean[users.size()];
 		}
@@ -149,26 +136,26 @@ public class GroupPickContactsActivity extends BaseActivity {
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			View view = super.getView(position, convertView, parent);
 
-			final String username = getItem(position).getUsername();
+			final String username = getItem(position).getMUserName();
 
 			final CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
 			ImageView avatarView = (ImageView) view.findViewById(R.id.avatar);
 			TextView nameView = (TextView) view.findViewById(R.id.name);
-			
+
 			if (checkBox != null) {
-			    if(existMembers != null && existMembers.contains(username)){
-                    checkBox.setButtonDrawable(R.drawable.em_checkbox_bg_gray_selector);
-                }else{
-                    checkBox.setButtonDrawable(R.drawable.em_checkbox_bg_selector);
-                }
+				if(existMembers != null && existMembers.contains(username)){
+					checkBox.setButtonDrawable(R.drawable.em_checkbox_bg_gray_selector);
+				}else{
+					checkBox.setButtonDrawable(R.drawable.em_checkbox_bg_selector);
+				}
 
 				checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						// check the exist members
 						if (existMembers.contains(username)) {
-								isChecked = true;
-								checkBox.setChecked(true);
+							isChecked = true;
+							checkBox.setChecked(true);
 						}
 						isCheckedArray[position] = isChecked;
 
@@ -176,8 +163,8 @@ public class GroupPickContactsActivity extends BaseActivity {
 				});
 				// keep exist members checked
 				if (existMembers.contains(username)) {
-						checkBox.setChecked(true);
-						isCheckedArray[position] = true;
+					checkBox.setChecked(true);
+					isCheckedArray[position] = true;
 				} else {
 					checkBox.setChecked(isCheckedArray[position]);
 				}
@@ -190,5 +177,5 @@ public class GroupPickContactsActivity extends BaseActivity {
 	public void back(View view){
 		finish();
 	}
-	
+
 }

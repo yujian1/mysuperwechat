@@ -1,3 +1,5 @@
+package cn.ucai.superwechat.ui;
+
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -141,7 +143,7 @@ public class ConversationListFragment extends EaseConversationListFragment{
         refresh();
 
         // update unread count
-        ((MainActivity) getActivity()).updateUnreadLabel();
+        ((MainActivity)getActivity()).updateUnreadLabel();
         return true;
     }
 

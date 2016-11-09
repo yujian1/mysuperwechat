@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.ui.EaseContactListFragment;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.NetUtils;
@@ -25,10 +26,14 @@ import java.util.Map;
 
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.data.NetDao;
+import cn.ucai.superwechat.data.OkHttpUtils;
 import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
+import cn.ucai.superwechat.utils.ResultUtils;
 import cn.ucai.superwechat.widget.ContactItemView;
 
 /**
@@ -69,16 +74,16 @@ public class ContactListFragment extends EaseContactListFragment {
         Map<String, EaseUser> m = SuperWeChatHelper.getInstance().getContactList();
         if (m instanceof Hashtable<?, ?>) {
             //noinspection unchecked
-            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>)m).clone();
+            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>) m).clone();
         }
         setContactsMap(m);
         super.refresh();
-        if(inviteMessgeDao == null){
+        if (inviteMessgeDao == null) {
             inviteMessgeDao = new InviteMessgeDao(getActivity());
         }
-        if(inviteMessgeDao.getUnreadMessagesCount() > 0){
+        if (inviteMessgeDao.getUnreadMessagesCount() > 0) {
             applicationItem.showUnreadMsgView();
-        }else{
+        } else {
             applicationItem.hideUnreadMsgView();
         }
     }
@@ -101,7 +106,7 @@ public class ContactListFragment extends EaseContactListFragment {
         //设置联系人数据
         Map<String, EaseUser> m = SuperWeChatHelper.getInstance().getContactList();
         if (m instanceof Hashtable<?, ?>) {
-            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>)m).clone();
+            m = (Map<String, EaseUser>) ((Hashtable<String, EaseUser>) m).clone();
         }
         setContactsMap(m);
         super.setUpView();
@@ -109,11 +114,11 @@ public class ContactListFragment extends EaseContactListFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EaseUser user = (EaseUser)listView.getItemAtPosition(position);
+                EaseUser user = (EaseUser) listView.getItemAtPosition(position);
                 if (user != null) {
                     String username = user.getUsername();
                     // demo中直接进入聊天页面，实际一般是进入用户详情页
-                    MFGT.gotoFriendProfile(getActivity(),SuperWeChatHelper.getInstance().getAppContactList().get(username));
+                    MFGT.gotoFriendProfile(getActivity(), SuperWeChatHelper.getInstance().getAppContactList().get(username));
 //                    startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("userId", username));
                 }
             }
@@ -154,17 +159,17 @@ public class ContactListFragment extends EaseContactListFragment {
             contactSyncListener = null;
         }
 
-        if(blackListSyncListener != null){
+        if (blackListSyncListener != null) {
             SuperWeChatHelper.getInstance().removeSyncBlackListListener(blackListSyncListener);
         }
 
-        if(contactInfoSyncListener != null){
+        if (contactInfoSyncListener != null) {
             SuperWeChatHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener(contactInfoSyncListener);
         }
     }
 
 
-    protected class HeaderItemClickListener implements OnClickListener{
+    protected class HeaderItemClickListener implements OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -204,7 +209,7 @@ public class ContactListFragment extends EaseContactListFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        L.e(TAG,"onContextItemSelected..."+item.getItemId());
+        L.e(TAG, "onContextItemSelected..." + item.getItemId());
         if (item.getItemId() == R.id.delete_contact) {
             try {
                 // delete contact
@@ -233,6 +238,24 @@ public class ContactListFragment extends EaseContactListFragment {
         pd.setMessage(st1);
         pd.setCanceledOnTouchOutside(false);
         pd.show();
+
+        NetDao.delContact(getActivity(), EMClient.getInstance().getCurrentUser(), tobeDeleteUser.getUsername(),
+                new OkHttpUtils.OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        if (s != null) {
+                            Result result = ResultUtils.getResultFromJson(s, User.class);
+                            if (result != null && result.isRetMsg()) {
+                                SuperWeChatHelper.getInstance().delAppContact(tobeDeleteUser.getUsername());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -270,14 +293,14 @@ public class ContactListFragment extends EaseContactListFragment {
             EMLog.d(TAG, "on contact list sync success:" + success);
             getActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    getActivity().runOnUiThread(new Runnable(){
+                    getActivity().runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            if(success){
+                            if (success) {
                                 loadingView.setVisibility(View.GONE);
                                 refresh();
-                            }else{
+                            } else {
                                 String s1 = getResources().getString(R.string.get_failed_please_check);
                                 Toast.makeText(getActivity(), s1, Toast.LENGTH_LONG).show();
                                 loadingView.setVisibility(View.GONE);
@@ -294,7 +317,7 @@ public class ContactListFragment extends EaseContactListFragment {
 
         @Override
         public void onSyncComplete(boolean success) {
-            getActivity().runOnUiThread(new Runnable(){
+            getActivity().runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -315,7 +338,7 @@ public class ContactListFragment extends EaseContactListFragment {
                 @Override
                 public void run() {
                     loadingView.setVisibility(View.GONE);
-                    if(success){
+                    if (success) {
                         refresh();
                     }
                 }
@@ -323,5 +346,4 @@ public class ContactListFragment extends EaseContactListFragment {
         }
 
     }
-
 }

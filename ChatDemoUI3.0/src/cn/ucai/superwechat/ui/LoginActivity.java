@@ -1,16 +1,4 @@
-/**
- * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
@@ -43,7 +31,6 @@ import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.data.NetDao;
 import cn.ucai.superwechat.data.OkHttpUtils;
 import cn.ucai.superwechat.db.SuperWeChatDBManager;
-import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MD5;
 import cn.ucai.superwechat.utils.MFGT;
@@ -51,6 +38,7 @@ import cn.ucai.superwechat.utils.ResultUtils;
 
 /**
  * Login screen
+ *
  */
 public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
@@ -59,39 +47,42 @@ public class LoginActivity extends BaseActivity {
     ImageView mImgBack;
     @BindView(R.id.txt_title)
     TextView mTxtTitle;
-    @BindView(R.id.et_login_username)
-    EditText mEtLoginUsername;
+    @BindView(R.id.et_username)
+    EditText mEtUsername;
     @BindView(R.id.et_login_password)
-    EditText mEtLoginPassword;
+    EditText mEtPassword;
 
     private boolean progressShow;
     private boolean autoLogin = false;
-    ProgressDialog pd = null;
-    LoginActivity mContext;
+
     String currentUsername;
     String currentPassword;
+    ProgressDialog pd;
+    LoginActivity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
-            // enter the main activity if already logged in
-            if (SuperWeChatHelper.getInstance().isLoggedIn()) {
-                autoLogin = true;
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                return;
-            }
-            setContentView(R.layout.activity_login);
-            ButterKnife.bind(this);
+        // enter the main activity if already logged in
+        if (SuperWeChatHelper.getInstance().isLoggedIn()) {
+            autoLogin = true;
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
-            setListener();
-            initview();
-            mContext = this;
+            return;
         }
+        setContentView(R.layout.em_activity_login);
+        ButterKnife.bind(this);
 
-    private void initview() {
+        setListener();
+        initView();
+        mContext = this;
+
+    }
+
+    private void initView() {
         if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtLoginUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
+            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
         mImgBack.setVisibility(View.VISIBLE);
         mTxtTitle.setVisibility(View.VISIBLE);
@@ -100,10 +91,10 @@ public class LoginActivity extends BaseActivity {
 
     private void setListener() {
         // if user changed, clear the password
-        mEtLoginUsername.addTextChangedListener(new TextWatcher() {
+        mEtUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEtLoginPassword.setText(null);
+                mEtPassword.setText(null);
             }
 
             @Override
@@ -120,15 +111,14 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * login
-     *
      */
     public void login() {
         if (!EaseCommonUtils.isNetWorkConnected(this)) {
             Toast.makeText(this, R.string.network_isnot_available, Toast.LENGTH_SHORT).show();
             return;
         }
-        currentUsername = mEtLoginUsername.getText().toString().trim();
-        currentPassword = mEtLoginPassword.getText().toString().trim();
+        currentUsername = mEtUsername.getText().toString().trim();
+        currentPassword = mEtPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(currentUsername)) {
             Toast.makeText(this, R.string.User_name_cannot_be_empty, Toast.LENGTH_SHORT).show();
@@ -140,7 +130,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         progressShow = true;
-        pd = new ProgressDialog(LoginActivity.this);
+        pd = new ProgressDialog(mContext);
         pd.setCanceledOnTouchOutside(false);
         pd.setOnCancelListener(new OnCancelListener() {
 
@@ -152,6 +142,7 @@ public class LoginActivity extends BaseActivity {
         });
         pd.setMessage(getString(R.string.Is_landing));
         pd.show();
+
         loginEMServer();
     }
 
@@ -171,6 +162,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "login: onSuccess");
+
                 loginAppServer();
             }
 
@@ -197,33 +189,31 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loginAppServer() {
-        NetDao.login(mContext, currentUsername, MD5.getMessageDigest(currentPassword), new OkHttpUtils.OnCompleteListener<String>() {
+        NetDao.login(mContext, currentUsername, currentPassword, new OkHttpUtils.OnCompleteListener<String>() {
             @Override
             public void onSuccess(String s) {
-                L.e(TAG,"s= "+s);
+                L.e(TAG,"s="+s);
                 if(s!=null && s!=""){
                     Result result = ResultUtils.getResultFromJson(s, User.class);
                     if(result!=null && result.isRetMsg()){
                         User user = (User) result.getRetData();
-                        if(user!=null){
-                            UserDao dao = new UserDao(mContext);
-                            dao.saveUser(user);
-                            SuperWeChatHelper.getInstance().setCurrentUser(user);
+                        if(user!=null) {
+                            SuperWeChatHelper.getInstance().saveAppContact(user);
                             loginSuccess();
-                        }else {
-                            pd.dismiss();
-                            L.e(TAG,"login fail ="+result.getRetCode());
                         }
-                    }else {
+                    }else{
                         pd.dismiss();
+                        L.e(TAG,"login fail,"+result);
                     }
+                }else{
+                    pd.dismiss();
                 }
             }
 
             @Override
             public void onError(String error) {
-                L.e(TAG,"error= "+error);
                 pd.dismiss();
+                L.e(TAG,"onError="+error);
             }
         });
     }
@@ -253,6 +243,7 @@ public class LoginActivity extends BaseActivity {
         finish();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -260,11 +251,11 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         if (SuperWeChatHelper.getInstance().getCurrentUsernName() != null) {
-            mEtLoginUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
+            mEtUsername.setText(SuperWeChatHelper.getInstance().getCurrentUsernName());
         }
     }
 
-    @OnClick({R.id.img_back, R.id.btn_login, R.id.login_register})
+    @OnClick({R.id.img_back, R.id.btn_login, R.id.btn_register})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
@@ -273,11 +264,12 @@ public class LoginActivity extends BaseActivity {
             case R.id.btn_login:
                 login();
                 break;
-            case R.id.login_register:
-                MFGT.gotoRegister(mContext);
+            case R.id.btn_register:
+                MFGT.gotoRegister(this);
                 break;
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -285,4 +277,5 @@ public class LoginActivity extends BaseActivity {
             pd.dismiss();
         }
     }
+
 }
